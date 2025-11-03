@@ -4,6 +4,8 @@
 * 최종 목표: Python을 주력으로 사용하여 웹캠을 통해 사용자의 면접 상황을 분석하고, 시선 회피, 몸 흔들기와 같은 특정 행동을 감지하여 실시간 텍스트 피드백을 제공하는 독립 실행형 GUI 애플리케이션을 구축합니다.
 
 ## High Level Design
+https://www.jobda.im/acc/tutorial
+
 * (프로젝트 아키텍쳐 기술, 전반적인 diagram 으로 설명을 권장)
 
 ## Clone code
