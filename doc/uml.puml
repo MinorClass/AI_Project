@@ -1,0 +1,245 @@
+' @startuml ND_Interview_Coach_System
+
+' title 신경다양인 면접 훈련 도구 (ND-Interview Coach) 시스템 클래스 다이어그램
+
+' abstract class IFeedbackSystem {
+'     + generateFeedback(data)
+' }
+
+' class MainApp {
+'     + initUI()
+'     + startSession()
+'     + stopSession()
+'     + updateFrame(frame)
+'     + displayFeedback(text)
+'     + displayScore(data)
+' }
+' note left of MainApp : PyQt/Tkinter GUI 담당\n(사용자 인터페이스)
+
+' class VideoProcessor {
+'     + startStream()
+'     + stopStream()
+'     + processFrame(frame) : Metrics
+' }
+' note right of VideoProcessor : OpenCV & MediaPipe 활용\n(카메라/시선/자세 분석)
+
+' class VoiceProcessor {
+'     + startRecording()
+'     + stopRecording()
+'     + analyzeVoice(audioData) : Metrics
+' }
+' note right of VoiceProcessor : 음성 떨림, 답변 시간 분석
+
+' class Controller {
+'     + startSessionFlow()
+'     + handleQuestionTransition()
+'     + handleGameLogic()
+'     + calculateFinalScore() : FinalScore
+' }
+' note left of Controller : 게임 및 면접 흐름 제어\n(핵심 비즈니스 로직)
+
+' class BehaviorTracker {
+'     + trackEyeContact(eyeData) : Score
+'     + trackPosture(poseData) : Score
+'     + trackVocalTremor(voiceData) : Score
+' }
+
+' class FeedbackGenerator {
+'     + generateRealtime(metrics) : Text
+'     + generateFinalReport(metrics) : ReportData
+' }
+' note right of FeedbackGenerator : 특정 조건(10초 시선 이탈 등) 시에만 작동
+
+' class GameLogic {
+'     + runGame(gameId)
+'     + checkGameAnswer(input) : Score
+'     + updateScore(score)
+' }
+' note left of GameLogic : 가위바위보, 숫자 클릭 등\n역량평가 게임 로직
+
+' class DataStore {
+'     + saveSessionLog(data)
+'     + loadScript(scriptId) : Script
+' }
+
+' ' ==================== 관계 정의 ==================== '
+
+' MainApp "1" o-- "1" Controller : controls >
+' MainApp "1" o-- "1" VideoProcessor : displays >
+' MainApp "1" o-- "1" VoiceProcessor : displays >
+
+' Controller "1" o-- "1" GameLogic : uses >
+' Controller "1" o-- "1" VideoProcessor : uses >
+' Controller "1" o-- "1" VoiceProcessor : uses >
+' Controller "1" o-- "1" DataStore : stores results >
+
+' VideoProcessor "1" --> "1" BehaviorTracker : sends vision data >
+' VoiceProcessor "1" --> "1" BehaviorTracker : sends voice data >
+
+' BehaviorTracker "1" --> "1" FeedbackGenerator : sends behavior metrics >
+
+' FeedbackGenerator ..|> IFeedbackSystem : implements
+' FeedbackGenerator "1" --> "1" MainApp : sends feedback >
+
+' DataStore "1" <-- "1" Controller : loads scripts / saves final data
+
+' @enduml
+
+@startuml ND_Interview_Coach_Scoring_System
+
+title 신경다양인 훈련 도구: 최종 점수 통합 구조
+
+abstract class IFeedbackSystem {
+    + generateFeedback(data)
+}
+
+class MainApp {
+    + displayScore(data)
+}
+
+class Controller {
+    + startSessionFlow()
+    + handleQuestionTransition()
+    + calculateFinalScore() : FinalScore
+}
+note left of Controller : 게임 및 면접 흐름 제어 및 최종 점수 취합
+
+class BehaviorTracker {
+    + trackEyeContact(eyeData) : BehaviorScore
+    + trackPosture(poseData) : BehaviorScore
+    + trackVocalTremor(voiceData) : BehaviorScore
+}
+note right of BehaviorTracker : 면접 중 비언어적 행동 점수 산출
+
+class GameLogic {
+    + runGame(gameId)
+    + checkGameAnswer(input) : GamePerformanceMetrics
+}
+note left of GameLogic : 게임 수행 결과(정확도, 반응 시간) 산출
+
+class ScoringSystem {
+    + calculateGameScore(metrics) : GameScore
+    + calculateBehaviorScore(metrics) : BehaviorScore
+    + combineScores(gameScore, behaviorScore) : FinalScore
+}
+note right of ScoringSystem : 게임 점수 및 행동 점수 산출 로직
+
+class FeedbackGenerator {
+    + generateRealtime(metrics) : Text
+    + generateFinalReport(metrics) : ReportData
+}
+
+class DataStore {
+    + saveSessionLog(data)
+}
+
+' ==================== 관계 정의 ==================== '
+
+Controller "1" o-- "1" GameLogic : initiates games >
+Controller "1" o-- "1" ScoringSystem : requests final score >
+Controller "1" o-- "1" BehaviorTracker : uses for interview analysis >
+
+GameLogic "1" --> "1" ScoringSystem : sends GamePerformanceMetrics
+BehaviorTracker "1" --> "1" ScoringSystem : sends BehaviorMetrics
+
+ScoringSystem "1" --> "1" Controller : returns FinalScore
+
+ScoringSystem "1" --> "1" FeedbackGenerator : sends detailed scores
+
+FeedbackGenerator ..|> IFeedbackSystem : implements
+FeedbackGenerator "1" --> "1" MainApp : sends feedback >
+
+Controller "1" --> "1" MainApp : displays score
+Controller "1" --> "1" DataStore : saves final data
+
+@enduml
+
+' @startuml Full_Scoring_Session_Flow
+
+' title AI 역량평가 및 면접
+
+' actor User
+' participant MainApp as App
+' participant Controller as Ctrl
+' participant VideoProcessor as VP
+' participant VoiceProcessor as VcProc
+' participant GameLogic as GL
+' participant BehaviorTracker as BT
+' participant ScoringSystem as SS
+' participant DataStore as DS
+
+' box "Session Setup"
+' User -> App : "시작" 버튼 클릭
+' App -> Ctrl : startFullSession()
+' Ctrl -> VP : startStream()
+' Ctrl -> VcProc : startRecording()
+' end box
+
+' == 1. AI 역량평가 게임 진행 ==
+' loop 3 Games (Game 1, Game 2, Game 3)
+'     Ctrl -> App : displayGameRule(Game_num)
+'     User -> App : "시작" / "다음"
+'     Ctrl -> GL : initGame(Game_num)
+    
+'     loop while Game_Timer_Running
+'         User -> App : gameInput(click/selection)
+'         App -> GL : processUserInput(input)
+        
+'         ' ' 게임 중에도 비언어적 행동 분석은 지속됨
+'         ' User -> VP : visualInput(frame)
+'         ' VP -> BT : trackBehavior(frame) : GameMetrics
+'     end
+    
+'     GL -> SS : calculateGameScore(performance_data)
+'     SS -> SS : calculateGameScore(data) : GameScore
+'     SS -> Ctrl : sendGameScore(GameScore)
+' end loop
+' ' Ctrl -> Ctrl : storeAllGameScores()
+
+' == 2. 면접 시뮬레이션 및 행동 분석 ==
+' Ctrl -> App : displayInterviewInfo()
+' User -> App : "면접 시작" 버튼 클릭
+
+' loop 3 Questions (Q1, Q2, Q3)
+'     Ctrl -> VcProc : generateTTS(question)
+    
+'     loop while answering or time limit not reached
+'         User -> VP : visualInput(frame)
+'         User -> VcProc : voiceInput(audio)
+
+'         VP -> BT : trackBehavior(frame) : InterviewMetrics
+'         VcProc -> BT : trackBehavior(audio) : InterviewMetrics
+        
+'         BT -> FG : getRealtimeFeedback(metrics)
+'         activate FG
+'         alt If specific condition met (e.g., 10s eye avoidance)
+'             FG -> App : sendFeedback(text)
+'         end
+'         deactivate FG
+'     end
+' end loop
+
+' == 3. 세션 종료 및 최종 점수 통합 ==
+' User -> App : "제출" 버튼 클릭
+' App -> Ctrl : endSession()
+
+' Ctrl -> VP : stopStream()
+' Ctrl -> VcProc : stopRecording()
+
+' BT -> SS : calculateBehaviorScore(all_interview_metrics)
+' SS -> SS : calculateBehaviorScore() : BehaviorScore
+
+' Ctrl -> SS : combineScores(allGameScores, BehaviorScore)
+' activate SS
+' SS -> Ctrl : return FinalScore
+' deactivate SS
+
+' Ctrl -> FG : generateFinalReport(FinalScore, detail_data)
+' activate FG
+' FG -> DS : saveSessionLog(final_data)
+' deactivate FG
+
+' Ctrl -> App : displayScore(FinalScore, graph_data)
+' App -> User : 최종 점수 및 상세 그래프 출력
+
+' @enduml
