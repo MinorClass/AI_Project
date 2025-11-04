@@ -28,7 +28,6 @@ class GameScore: #게임점수
 
 class GameManager:
     def __init__(self):
-        self.is_game_running = False
         self.duration = 30  # 지속시간
         self.games = {
             1: RockPaperScissorsGame()
@@ -40,11 +39,12 @@ class GameManager:
         while self.is_game_running:
             remaining_time = int(self.duration - (time.time()-start_time))
 
-            print(f'\r남은 시간: {remaining_time}초', end='', flush=True)
+            # print(f'\r남은 시간: {remaining_time}초', end='', flush=True)
 
             if remaining_time <=0:
                 self.is_game_running = False
                 print("\n시간종료!")
+
                 break
 
             time.sleep(0.1)
@@ -64,9 +64,6 @@ class GameManager:
         
 
 
-
-
-
 """
 Rock-Paper-Scissors 게임 로직
 - 가위바위보 게임을 30초 동안 진행
@@ -84,7 +81,7 @@ class RockPaperScissorsGame(GameLogic): #가위바위보 게임
         self.solved_count = 0
         self.score_rsp = 0
 
-    def runGame(self, manger, gameId): #게임 실행
+    def runGame(self, manager, gameId): #게임 실행
 
         import random
 
@@ -98,25 +95,22 @@ class RockPaperScissorsGame(GameLogic): #가위바위보 게임
 
             # --- 가위바위보 게임 로직 시작 ---
             if who_pick == 'computer':
-                print (f'\nComputer: {blank_pick}')
-                player_pick = input('\nrock scissors paper <-- One choice   ').upper()
-                if  (blank_pick == 'rock' and player_pick == 'paper') or \
-                    (blank_pick == 'scissors' and player_pick == 'rock') or \
-                    (blank_pick == 'paper' and player_pick == 'scissors'):
+                print (f'Computer: {blank_pick}')
+                player_pick = input('\nrock scissors paper <-- One choice   ').lower()
+                if (blank_pick == 'rock' and player_pick == 'paper') or (blank_pick == 'scissors' and player_pick == 'rock') or (blank_pick == 'paper' and player_pick == 'scissors'):
                     self.correct_count += 1
             elif who_pick =='you':
-                print (f'\nYou: {blank_pick}')
-                computer_pick = input('\nrock scissors paper <-- One choice   ').upper()
-                if  (blank_pick == 'paper' and computer_pick == 'rock') or \
-                    (blank_pick == 'rock' and computer_pick == 'scissors') or \
-                    (blank_pick == 'scissors' and computer_pick == 'paper'):
+                print (f'You: {blank_pick}')
+                computer_pick = input('\nrock scissors paper <-- One choice   ').lower()
+                if (blank_pick == 'paper' and computer_pick == 'rock') or (blank_pick == 'rock' and computer_pick == 'scissors') or (blank_pick == 'scissors' and computer_pick == 'paper'):
                     self.correct_count += 1
-            
             self.solved_count += 1
-        
+
         # --- 최종점수 출력 ---
-        self.score_rsp = (self.correct_count / self.solved_count) *100
-        print(f'Score: {self.score_rsp}점')
+        self.score_rsp = int((self.correct_count / self.solved_count) *100)
+        print(f'Score: {self.score_rsp}점   ({self.correct_count}/{self.solved_count})')
+        
+
 
 
 
