@@ -11,7 +11,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/home/test/miner_class/build/assets/frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"/home/test/AI_Project/build/assets/frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -37,69 +37,26 @@ canvas = Canvas(
 canvas.place(x = 0, y = 0)
 canvas.create_rectangle(
     0.0,
-    0.0,
+    954.0,
     1920.0,
     1080.0,
-    fill="#D9D9D9",
-    outline="")
-
-canvas.create_rectangle(
-    39.0,
-    64.0,
-    1883.0,
-    265.0,
     fill="#000000",
     outline="")
 
-canvas.create_text(
-    682.0,
-    106.0,
-    anchor="nw",
-    text="프로젝트 이름",
-    fill="#000000",
-    font=("Inter", 96 * -1)
-)
-
 canvas.create_rectangle(
-    638.0,
-    316.0,
-    1274.0,
-    403.0,
-    fill="#FFC8A6",
+    230.0,
+    126.0,
+    1690.0,
+    954.0,
+    fill="#000000",
     outline="")
 
-canvas.create_text(
-    770.0,
-    316.0,
-    anchor="nw",
-    text="프로그램 목적",
-    fill="#000000",
-    font=("Inter", 64 * -1)
-)
-
 canvas.create_rectangle(
-    1725.0,
-    938.0,
-    1852.0,
-    1032.0,
-    fill="#FFC8A6",
-    outline="")
-
-canvas.create_text(
-    1730.0,
-    947.0,
-    anchor="nw",
-    text="준비",
+    0.0,
+    0.0,
+    1920.0,
+    126.0,
     fill="#000000",
-    font=("Inter", 64 * -1)
-)
-
-canvas.create_rectangle(
-    284.0,
-    422.0,
-    1669.0,
-    865.0,
-    fill="#FFC8A6",
     outline="")
 window.resizable(False, False)
 window.mainloop()
