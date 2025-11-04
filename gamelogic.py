@@ -52,15 +52,17 @@ class GameManager:
     def start_game(self, gameId):
         self.is_game_running = True
 
-        if gameId in self.games:
-            return self.games[gameId].runGame(gameId, duration = 30)
-        else:
-            raise ValueError("Invalid game ID")
-        
         # 타이머 스레드
         timer_thread = threading.Thread(target=self.timer)
         timer_thread.daemon = True
         timer_thread.start()
+
+        if gameId in self.games:
+            return self.games[gameId].runGame(self, gameId)
+        else:
+            raise ValueError("Invalid game ID")
+        
+
 
 
 
@@ -82,28 +84,29 @@ class RockPaperScissorsGame(GameLogic): #가위바위보 게임
         self.solved_count = 0
         self.score_rsp = 0
 
-    def runGame(self, gameId=None, duration = 30): #게임 실행
+    def runGame(self, manger, gameId): #게임 실행
+
         import random
 
-        while self.is_game_running:
+        print('\n----------------------------------------------')
+        print('내가 이겨야합니다(30초 경과 시 자동 종료)')
+
+        while manager.is_game_running:
             blank_pick = random.choice(self.choices)
             who_pick = random.choice(self.who)
-
-            print('\n----------------------------------------------')
-            print('내가 이겨야합니다(30초 경과 시 자동 종료)')
             print('\n----------------------------------------------')
 
             # --- 가위바위보 게임 로직 시작 ---
             if who_pick == 'computer':
-                print (f'Computer: {blank_pick}')
-                player_pick = input('rock scissors paper <-- One choice   ').upper()
+                print (f'\nComputer: {blank_pick}')
+                player_pick = input('\nrock scissors paper <-- One choice   ').upper()
                 if  (blank_pick == 'rock' and player_pick == 'paper') or \
                     (blank_pick == 'scissors' and player_pick == 'rock') or \
                     (blank_pick == 'paper' and player_pick == 'scissors'):
                     self.correct_count += 1
             elif who_pick =='you':
-                print (f'You: {blank_pick}')
-                computer_pick = input('rock scissors paper <-- One choice   ').upper()
+                print (f'\nYou: {blank_pick}')
+                computer_pick = input('\nrock scissors paper <-- One choice   ').upper()
                 if  (blank_pick == 'paper' and computer_pick == 'rock') or \
                     (blank_pick == 'rock' and computer_pick == 'scissors') or \
                     (blank_pick == 'scissors' and computer_pick == 'paper'):
