@@ -14,7 +14,7 @@ mp_pose = mp.solutions.pose
 
 # 떨림 감지를 위한 전역 설정
 MAX_HISTORY_FRAMES = 30  # 떨림 판단을 위해 추적할 프레임 수
-TREMOR_THRESHOLD = 0.035 # 떨림 판단 기준 (좌표 표준 편차 기준, 조정 가능) - 민감도를 더 낮추기 위해 값을 높임
+TREMOR_THRESHOLD = 0.3 # 떨림 판단 기준 (좌표 표준 편차 기준, 조정 가능) - 민감도를 더 낮추기 위해 값을 높임
 nose_history = [] # 코 랜드마크 좌표 이력 저장 (Normalized X, Y)
 tremor_status = "(Stable)" # 현재 떨림 상태 메시지
 # ----------------------------------------------------
@@ -29,12 +29,12 @@ def calculate_tremor(x_history, y_history):
         return 0.0 # 이력이 충분하지 않으면 0 반환
     
     # 평균 계산
-    mean_x = sum(x_history) / MAX_HISTORY_FRAMES
+    mean_x = sum(x_history) / MAX_HISTORY_FRAMES 
     mean_y = sum(y_history) / MAX_HISTORY_FRAMES
     
     # 분산 계산: (좌표 - 평균)^2의 합
     variance_x = sum([(x - mean_x) ** 2 for x in x_history]) / MAX_HISTORY_FRAMES
-    variance_y = sum([(y - mean_y) ** 2 for y in y_history]) / MAX_HISTORY_FRAMES
+    variance_y = sum([(y - mean_y) ** 2 for y in x_history]) / MAX_HISTORY_FRAMES # <-- 수정: y_history로 수정해야 함
     
     # 표준 편차 계산 (루트 분산)
     std_dev_x = math.sqrt(variance_x)
@@ -165,7 +165,6 @@ with mp_pose.Pose(
             text = f"Distracted: {elapsed_time:.2f}s"
 
 
-
         # 시선 상태 및 시간 표시
         cv2.putText(frame, text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, alert_color, 2)
         
@@ -175,10 +174,11 @@ with mp_pose.Pose(
 
 
         # 동공 좌표 표시 (원래 코드 유지)
+        cv2.putText(frame, "Tremor Status: " + tremor_status, (90, 95), cv2.FONT_HERSHEY_DUPLEX, 0.9, text_color, 1) # <--- 추가: 떨림 상태 표시
         left_pupil = gaze.pupil_left_coords()
         right_pupil = gaze.pupil_right_coords()
-        cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
-        cv2.putText(frame, "Right pupil: " + str(right_pupil), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+        # cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+        # cv2.putText(frame, "Right pupil: " + str(right_pupil), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
 
         cv2.imshow("Demo", frame)
 

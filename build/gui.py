@@ -35,27 +35,69 @@ canvas = Canvas(
 )
 
 canvas.place(x = 0, y = 0)
-canvas.create_rectangle(
-    0.0,
-    954.0,
-    1920.0,
-    1080.0,
-    fill="#000000",
-    outline="")
+image_image_1 = PhotoImage(
+    file=relative_to_assets("image_1.png"))
+image_1 = canvas.create_image(
+    960.0,
+    562.0,
+    image=image_image_1
+)
+
+canvas.create_text(
+    662.0,
+    329.0,
+    anchor="nw",
+    text="부족한 면접 경험을 AI와 함께\n채워 나가보세요.",
+    fill="#42364D",
+    font=("Aldrich Regular", 48 * -1)
+)
+
+canvas.create_text(
+    582.0,
+    647.0,
+    anchor="nw",
+    text="· AI가 내 면접을 분석하고 판단하여 도움을 줘요.\n·영상 면접 환경과 실제 면접의 훈련을 할 수 있어요.\n·마지막 피드백을 통해 고쳐야 할 점을 알수 있어요.",
+    fill="#352C3E",
+    font=("AnekGurmukhi Light", 36 * -1)
+)
+
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+button_1 = Button(
+    image=button_image_1,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_1 clicked"),
+    relief="flat"
+)
+button_1.place(
+    x=822.0,
+    y=517.0,
+    width=277.0,
+    height=75.0
+)
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_2 clicked"),
+    relief="flat"
+)
+button_2.place(
+    x=822.0,
+    y=829.0,
+    width=277.0,
+    height=84.0
+)
 
 canvas.create_rectangle(
     230.0,
-    126.0,
+    147.0,
     1690.0,
-    954.0,
-    fill="#000000",
-    outline="")
-
-canvas.create_rectangle(
-    0.0,
-    0.0,
-    1920.0,
-    126.0,
+    213.0,
     fill="#000000",
     outline="")
 window.resizable(False, False)
