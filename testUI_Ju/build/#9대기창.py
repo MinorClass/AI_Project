@@ -8,11 +8,11 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import os
 
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame12")
-
+# OUTPUT_PATH = Path(__file__).parent
+# ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame4")
+ASSETS_PATH = os.path.abspath("./testUI_Ju/build/assets/#9대기창")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -43,12 +43,13 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
-image_2 = canvas.create_image(
-    959.0,
-    563.0,
-    image=image_image_2
+canvas.create_text(
+    730.0,
+    499.0,
+    anchor="nw",
+    text="수고하였습니다!\n\n데이터를 분석중입니다.",
+    fill="#42364D",
+    font=("Aldrich Regular", 48 * -1)
 )
 
 button_image_1 = PhotoImage(
@@ -61,52 +62,18 @@ button_1 = Button(
     relief="flat"
 )
 button_1.place(
-    x=1501.0,
-    y=147.0,
-    width=168.0,
-    height=66.0
+    x=822.0,
+    y=829.0,
+    width=277.0,
+    height=84.0
 )
 
-canvas.create_rectangle(
-    997.0,
-    329.0,
-    1669.0,
-    959.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    250.0,
-    329.0,
-    922.0,
-    959.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_rectangle(
-    876.0,
-    540.0,
-    1043.0,
-    628.0,
-    fill="#FFFFFF",
-    outline="")
-
-canvas.create_text(
-    254.0,
-    238.0,
-    anchor="nw",
-    text="진행시간\n00:00:00",
-    fill="#000000",
-    font=("Inter Light", 32 * -1)
-)
-
-canvas.create_text(
-    1529.0,
-    238.0,
-    anchor="nw",
-    text="맞춘 개수\n00/00",
-    fill="#000000",
-    font=("Inter Light", 32 * -1)
+image_image_2 = PhotoImage(
+    file=relative_to_assets("image_2.png"))
+image_2 = canvas.create_image(
+    960.0,
+    180.0,
+    image=image_image_2
 )
 window.resizable(False, False)
 window.mainloop()

@@ -8,11 +8,11 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import os
 
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame7")
-
+# OUTPUT_PATH = Path(__file__).parent
+# ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame9")
+ASSETS_PATH = os.path.abspath("./testUI_Ju/build/assets/#3가상면접")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -52,35 +52,51 @@ image_2 = canvas.create_image(
 )
 
 canvas.create_rectangle(
+    960.0,
+    210.0,
+    1690.0,
+    979.0,
+    fill="#000000",
+    outline="")
+
+canvas.create_rectangle(
     230.0,
-    211.0,
-    1690.0,
+    210.0,
+    960.0,
     979.0,
-    fill="#FFFFFF",
+    fill="#000000",
     outline="")
 
 canvas.create_rectangle(
-    229.0,
-    211.0,
-    1079.0,
-    611.0,
-    fill="#FFFFFF",
+    735.0,
+    266.0,
+    1185.0,
+    716.0,
+    fill="#000000",
     outline="")
 
 canvas.create_rectangle(
-    1079.0,
-    211.0,
-    1690.0,
-    641.0,
-    fill="#FFFFFF",
+    419.0,
+    761.0,
+    1501.0,
+    900.0,
+    fill="#000000",
     outline="")
 
 canvas.create_rectangle(
-    1079.0,
-    641.0,
-    1690.0,
-    979.0,
-    fill="#703BA2",
+    1256.0,
+    595.0,
+    1664.0,
+    734.0,
+    fill="#000000",
+    outline="")
+
+canvas.create_rectangle(
+    1310.0,
+    266.0,
+    1610.0,
+    566.0,
+    fill="#000000",
     outline="")
 
 button_image_1 = PhotoImage(
@@ -93,19 +109,19 @@ button_1 = Button(
     relief="flat"
 )
 button_1.place(
-    x=1246.0,
-    y=768.0,
-    width=277.0,
-    height=84.0
+    x=1548.0,
+    y=865.0,
+    width=98.0,
+    height=70.0
 )
 
 canvas.create_text(
-    1125.0,
-    336.0,
+    447.0,
+    452.0,
     anchor="nw",
-    text="· 목표\n\n이 게임은 무작위로 배열된 숫자를 주어진 규칙 에 맞게 \n정확하고 빠르게 차례대로 눌러야하는 게임입니다.",
+    text="진행시간\n00:00:00",
     fill="#000000",
-    font=("Inter", 20 * -1)
+    font=("Inter Light", 32 * -1)
 )
 
 button_image_2 = PhotoImage(
@@ -118,44 +134,62 @@ button_2 = Button(
     relief="flat"
 )
 button_2.place(
-    x=1516.0,
-    y=148.0,
+    x=455.0,
+    y=563.0,
+    width=121.0,
+    height=52.0
+)
+
+button_image_3 = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+button_3 = Button(
+    image=button_image_3,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_3 clicked"),
+    relief="flat"
+)
+button_3.place(
+    x=1519.0,
+    y=146.0,
     width=174.0,
     height=67.0
 )
 
-canvas.create_rectangle(
-    240.0,
-    221.0,
-    340.0,
-    321.0,
-    fill="#000000",
-    outline="")
-
-canvas.create_rectangle(
-    240.0,
-    619.0,
-    340.0,
-    719.0,
-    fill="#000000",
-    outline="")
-
 canvas.create_text(
-    396.0,
-    395.0,
+    861.0,
+    435.0,
     anchor="nw",
-    text="제시된 숫자 하나를 빠르게 눌러야 한다",
+    text="가상 면접관\n450 x 450",
     fill="#000000",
-    font=("Inter", 32 * -1)
+    font=("Inter", 40 * -1)
 )
 
 canvas.create_text(
-    349.0,
-    772.0,
+    558.0,
+    802.0,
     anchor="nw",
-    text="조건에 따라 1~9의 숫자를 빠르게 눌러야 한다",
+    text="질문",
     fill="#000000",
-    font=("Inter", 32 * -1)
+    font=("Inter", 40 * -1)
+)
+
+canvas.create_text(
+    1283.0,
+    641.0,
+    anchor="nw",
+    text="feedback",
+    fill="#000000",
+    font=("Inter", 40 * -1)
+)
+
+canvas.create_text(
+    1358.0,
+    363.0,
+    anchor="nw",
+    text="모의 면접자 \nwebcam",
+    fill="#000000",
+    font=("Inter", 40 * -1)
 )
 window.resizable(False, False)
 window.mainloop()

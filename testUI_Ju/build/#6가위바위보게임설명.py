@@ -8,11 +8,11 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import os
 
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame8")
-
+# OUTPUT_PATH = Path(__file__).parent
+# ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame6")
+ASSETS_PATH = os.path.abspath("./testUI_Ju/build/assets/#6가위바위보게임설명")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -60,6 +60,14 @@ canvas.create_rectangle(
     outline="")
 
 canvas.create_rectangle(
+    229.0,
+    211.0,
+    1079.0,
+    466.0,
+    fill="#FFFFFF",
+    outline="")
+
+canvas.create_rectangle(
     1079.0,
     211.0,
     1690.0,
@@ -73,6 +81,14 @@ canvas.create_rectangle(
     1690.0,
     979.0,
     fill="#703BA2",
+    outline="")
+
+canvas.create_rectangle(
+    229.0,
+    466.0,
+    1079.0,
+    721.0,
+    fill="#FFFFFF",
     outline="")
 
 button_image_1 = PhotoImage(
@@ -92,10 +108,10 @@ button_1.place(
 )
 
 canvas.create_text(
-    1248.0,
-    336.0,
+    1123.0,
+    339.0,
     anchor="nw",
-    text="· 목표\n\n개수가 더 많은 도형을 \n 선택해야하는 게임입니다.",
+    text="· 목표\n\n이 게임은 가위, 바위, 보를 선택하여 상대방을 이겨야\n하는 게임입니다.",
     fill="#000000",
     font=("Inter", 20 * -1)
 )
@@ -116,11 +132,53 @@ button_2.place(
     height=67.0
 )
 
+canvas.create_rectangle(
+    238.0,
+    220.0,
+    338.0,
+    320.0,
+    fill="#000000",
+    outline="")
+
+canvas.create_rectangle(
+    238.0,
+    473.0,
+    338.0,
+    573.0,
+    fill="#000000",
+    outline="")
+
+canvas.create_rectangle(
+    238.0,
+    728.0,
+    338.0,
+    828.0,
+    fill="#000000",
+    outline="")
+
 canvas.create_text(
-    260.0,
-    443.0,
+    362.0,
+    302.0,
     anchor="nw",
-    text="도형의 크기는 과제의 목표와는 무관하니 꼭 기억해 주세요.   \n도형이 나타나는 시간이 짧으니, \n제시 화면을 놓치지 않도록 해야 해요.\n   게임이 진행될수록 양쪽 단어의 수가 많아져서 어려워져요.\n \n헷갈리더라도 직관적으로 선택하는 것이 중요해요!",
+    text="‘나’의 관점에서 진행한다.\n 즉, ‘상대’를 보고 ‘나’가 이기게 선택해야한다.",
+    fill="#000000",
+    font=("Inter", 32 * -1)
+)
+
+canvas.create_text(
+    410.0,
+    810.0,
+    anchor="nw",
+    text="‘나’, ‘상대’ 관점이 랜덤으로 진행된다.\n 무조건 ‘나’가 이기게 선택해야한다.",
+    fill="#000000",
+    font=("Inter", 32 * -1)
+)
+
+canvas.create_text(
+    375.0,
+    555.0,
+    anchor="nw",
+    text="‘상대’의 관점에서 진행한다.\n즉, ‘나’를 보고 ‘나’가 이기게 선택해야한다.",
     fill="#000000",
     font=("Inter", 32 * -1)
 )

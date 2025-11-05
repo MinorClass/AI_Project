@@ -8,11 +8,11 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import os
 
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame2")
-
+# OUTPUT_PATH = Path(__file__).parent
+# ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame3")
+ASSETS_PATH = os.path.abspath("./testUI_Ju/build/assets/#4대기창")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -43,6 +43,15 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
+canvas.create_text(
+    758.0,
+    499.0,
+    anchor="nw",
+    text="수고하였습니다!\n\n게임 시작 전\n잠시 쉬어가겠습니다",
+    fill="#42364D",
+    font=("Aldrich Regular", 48 * -1)
+)
+
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
 button_1 = Button(
@@ -66,21 +75,5 @@ image_2 = canvas.create_image(
     180.0,
     image=image_image_2
 )
-
-canvas.create_rectangle(
-    267.0,
-    275.0,
-    926.0,
-    767.0,
-    fill="#D9D9D9",
-    outline="")
-
-canvas.create_rectangle(
-    991.0,
-    275.0,
-    1650.0,
-    767.0,
-    fill="#D9D9D9",
-    outline="")
 window.resizable(False, False)
 window.mainloop()
