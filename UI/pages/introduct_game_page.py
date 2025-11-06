@@ -30,6 +30,15 @@ class IntroGames(tk.Frame):
         self.image3 = PhotoImage(file=relative_to_assets("bimages.png"))
         canvas.create_image(230,468, image=self.image3, anchor="nw")
 
+        self.image4 = PhotoImage(file=relative_to_assets("image_a1.png"))
+        canvas.create_image(650,416, image=self.image4, anchor="nw")
+
+        self.image5 = PhotoImage(file=relative_to_assets("image_a2.png"))
+        canvas.create_image(650,671, image=self.image5, anchor="nw")
+
+        self.image6 = PhotoImage(file=relative_to_assets("image_a3.png"))
+        canvas.create_image(650,926, image=self.image6, anchor="nw")
+
         # 가위바위보 텍스트
         canvas.create_text(
             280,
@@ -99,7 +108,7 @@ class IntroGames(tk.Frame):
         # 버튼 이미지
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_2.png"))
         button_1 = Button(self, image=self.button_image_1,
-                          command=lambda: controller.quit(),
+                          command=lambda: controller.show_frame("IntroRSPGame"),
                           borderwidth=0, relief="flat")
         canvas.create_window(1545, 916, window=button_1, anchor="nw")
 
