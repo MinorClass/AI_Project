@@ -3,16 +3,19 @@ import mediapipe as mp
 from gaze_tracking import GazeTracking
 import time
 import math
+import numpy as np # ✨ NumPy 라이브러리 추가
 
 # ====================================================================
-# 설정 상수
+# 설정 상수 (개선)
 # ====================================================================
 
 # 떨림 감지 설정
-MAX_HISTORY_FRAMES = 30  # 떨림 판단을 위해 추적할 프레임 수
-TREMOR_THRESHOLD = 0.03  # 떨림 판단 기준 (이 값보다 크면 'Tremor')
+FFT_WINDOW_SIZE = 64  # 주파수 분석을 위해 추적할 프레임 수 (2의 거듭제곱)
+FPS = 30 # 비디오 캡처 FPS (실제 환경에 맞게 조정 필요)
+TREMOR_FREQUENCY_RANGE = (3.0, 15.0) # 떨림으로 간주할 주파수 대역 (Hz)
+TREMOR_AMPLITUDE_THRESHOLD = 0.05  # 떨림 판단 기준 (정규화된 진폭)
 
-# 시선 경고 설정
+# 시선 경고 설정 (기존과 동일)
 ALERT_THRESHOLD = 3.0 # 초 (중앙을 벗어난 시선 지속 시간)
 
 # MediaPipe 떨림 계산 및 추적을 위한 랜드마크 인덱스
@@ -20,145 +23,167 @@ LEFT_EAR_INDEX = mp.solutions.pose.PoseLandmark.LEFT_EAR.value
 RIGHT_EAR_INDEX = mp.solutions.pose.PoseLandmark.RIGHT_EAR.value
 NOSE_INDEX = mp.solutions.pose.PoseLandmark.NOSE.value
 
-# ====================================================================
-# 떨림 계산 도우미 함수
-# ====================================================================
 
-def calculate_tremor(x_history, y_history, scale_factor):
+def calculate_tremor_parameters(x_history, y_history, scale_factor, fps):
     """
-    정규화된 랜드마크 좌표의 '분산 합의 제곱근(RSV)'을 기반으로 
-    귀 사이 거리로 스케일링된 떨림 지수를 계산합니다.
+    떨림의 진폭 및 주파수를 계산합니다.
     """
     history_len = len(x_history)
-    # 이력이 충분하지 않거나 스케일 팩터(귀 사이 거리)가 0이면 0 반환
-    if history_len == 0 or history_len < MAX_HISTORY_FRAMES or scale_factor == 0:
-        return 0.0
+    
+    if history_len < FFT_WINDOW_SIZE or scale_factor == 0 or fps == 0:
+        return 0.0, 0.0 # 진폭, 주파수
+
+    # 1. 진폭(Amplitude) 계산 
     
     # 평균 계산
-    mean_x = sum(x_history) / history_len
-    mean_y = sum(y_history) / history_len
+    mean_x = np.mean(x_history)
+    mean_y = np.mean(y_history)
     
-    # 분산 계산: (좌표 - 평균)^2의 합
-    variance_x = sum([(x - mean_x) ** 2 for x in x_history]) / history_len
-    variance_y = sum([(y - mean_y) ** 2 for y in x_history]) / history_len 
+    # 분산 합의 제곱근
+    variance_x = np.mean([(x - mean_x) ** 2 for x in x_history])
+    variance_y = np.mean([(y - mean_y) ** 2 for y in y_history]) 
     
-    # 떨림 지수 (분산 합의 제곱근)
-    tremor_index = math.sqrt(variance_x + variance_y)
+    # 정규화된 진폭
+    tremor_amplitude = math.sqrt(variance_x + variance_y) / scale_factor
     
-    # 귀 사이 거리(scale_factor)로 나누어 정규화
-    return tremor_index / scale_factor
+    # 2. 주파수(Frequency) 계산 (FFT 적용)
+    
+    # 코 랜드마크의 2차원 변위 벡터
+    displacement_signal = np.array(x_history) + 1j * np.array(y_history) # 복소수 신호로 결합
 
-# ====================================================================
-# 주의력 모니터링 클래스
-# ====================================================================
+    # FFT 계산
+    fft_values = np.fft.fft(displacement_signal)
+    fft_power = np.abs(fft_values)
+    
+    # 주파수 축 생성
+    frequencies = np.fft.fftfreq(history_len, d=1.0/fps)
+    
+    # 양수 주파수 대역만 사용 (대칭이므로)
+    positive_frequencies = frequencies[1:history_len//2]
+    positive_power = fft_power[1:history_len//2]
+    
+    if len(positive_frequencies) == 0:
+        return tremor_amplitude, 0.0
+
+    # 3. 떨림 주파수 대역 내의 최대 파워 주파수 찾기
+    
+    # 떨림 대역 내의 인덱스 마스크
+    mask = (positive_frequencies >= TREMOR_FREQUENCY_RANGE[0]) & \
+           (positive_frequencies <= TREMOR_FREQUENCY_RANGE[1])
+
+    if np.any(mask):
+        # 떨림 대역 내에서 최대 파워를 가진 주파수
+        tremor_index = np.argmax(positive_power[mask])
+        tremor_frequency = positive_frequencies[mask][tremor_index]
+    else:
+        tremor_frequency = 0.0 # 떨림 대역에서 유의미한 주파수가 없음
+        
+    return tremor_amplitude, tremor_frequency
 
 class AttentionMonitor:
-    """
-    시선 추적과 머리 떨림 감지를 통합하여 주의력과 안정성을 모니터링하는 클래스입니다.
-    """
+    
     def __init__(self, camera_index=4):
-        # 추적 객체 초기화
         self.gaze = GazeTracking()
-        # MediaPipe Pose 객체 초기화
         self.pose_detector = mp.solutions.pose.Pose(
-            static_image_mode=False,
-            model_complexity=1, 
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5
+            static_image_mode=False, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5
         )
-        # 웹캠 캡처 객체 초기화
         self.cap = cv2.VideoCapture(camera_index)
         
-        # 떨림 관련 상태 변수
-        self.nose_history = []  # 코 랜드마크 이력 저장 (정규화된 X, Y)
-        self.tremor_status = "(Stable)" # 현재 떨림 상태 메시지
-        self.current_tremor_score = 0.0 # 현재 떨림 점수
+        # 실제 카메라 FPS를 가져오거나 설정값 사용
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS) 
+        if self.fps <= 1.0: # FPS 획득 실패 시 기본값
+            self.fps = FPS 
+
+        # 떨림 관련 상태 변수 (업데이트)
+        self.nose_history_x = [] # 코 X 랜드마크 이력
+        self.nose_history_y = [] # 코 Y 랜드마크 이력
+        self.tremor_status = "(Stable)" 
+        self.current_amplitude = 0.0 # 현재 떨림 진폭
+        self.current_frequency = 0.0 # 현재 떨림 주파수
         
-        # 시선 관련 상태 변수
-        self.gaze_start_time = None # 중앙을 벗어난 시선 시작 시간
-        self.is_gaze_outside_center = False # 중앙을 벗어난 상태 여부
+        # 시선 관련 상태 변수 (기존과 동일)
+        self.gaze_start_time = None 
+        self.is_gaze_outside_center = False
         
-        # 현재 프레임 저장 변수
         self.frame = None
 
     def __del__(self):
-        """객체가 소멸될 때 리소스를 정리합니다."""
         self.pose_detector.close()
         self.cap.release()
 
+    # (get_frame 메소드는 기존과 동일)
     def get_frame(self):
-        """웹캠에서 프레임을 읽어옵니다."""
         ret, self.frame = self.cap.read()
         return ret, self.frame
 
     def process_frame(self):
-        """
-        현재 프레임을 처리하여 시선 추적 및 자세 추정을 수행하고,
-        상태를 업데이트하며, 주석이 달린 프레임과 측정 결과를 반환합니다.
-        """
         if self.frame is None:
             return None, "로드된 프레임 없음"
 
         current_time = time.time()
-        elapsed_time = 0.0
         
-        # 1. 시선 추적 실행
+        # 1. 시선 추적 및 자세 추정 (기존과 동일)
         self.gaze.refresh(self.frame)
         annotated_frame = self.gaze.annotated_frame()
-        
-        # 2. 자세 추정 실행 (떨림 감지용)
         rgb_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
         results = self.pose_detector.process(rgb_frame)
         
-        # 3. 떨림 감지 로직 실행
+        # 2. 떨림 감지 로직 실행 (수정)
         self._detect_tremor(results)
 
-        # 4. 시선 상태 로직 실행
+        # 3. 시선 상태 로직 실행 (기존과 동일)
         gaze_text, elapsed_time, alert_text = self._check_gaze_status(current_time)
 
-        # 5. 프레임에 정보 그리기
+        # 4. 프레임에 정보 그리기 (수정)
         
         # 시선 상태 텍스트
-        alert_color = (147, 58, 31) # 기본 텍스트 색상
+        alert_color = (147, 58, 31) 
         if alert_text:
-            alert_color = (0, 0, 255) # 경고 시 빨간색
+            alert_color = (0, 0, 255) 
         cv2.putText(annotated_frame, gaze_text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, alert_color, 2)
         
-        # 떨림 상태 텍스트
-        text_color = (255, 255, 255) # 기본 흰색
+        # 떨림 상태 텍스트 (진폭 및 주파수 표시)
+        text_color = (255, 255, 255)
         if "Tremor" in self.tremor_status:
-            text_color = (0, 0, 255) # 떨림 시 빨간색
+            text_color = (0, 0, 255)
         elif "Stable" in self.tremor_status:
-            text_color = (0, 255, 0) # 안정 시 녹색
-
-        cv2.putText(annotated_frame, "Tremor: " + self.tremor_status, (90, 95), cv2.FONT_HERSHEY_DUPLEX, 0.9, text_color, 1) 
+            text_color = (0, 255, 0)
+            
+        tremor_display = f"Tremor: {self.tremor_status}"
+        tremor_info = f"Amp: {self.current_amplitude:.5f} | Freq: {self.current_frequency:.2f}Hz"
+        
+        cv2.putText(annotated_frame, tremor_display, (90, 95), cv2.FONT_HERSHEY_DUPLEX, 0.9, text_color, 1) 
+        cv2.putText(annotated_frame, tremor_info, (90, 125), cv2.FONT_HERSHEY_DUPLEX, 0.7, text_color, 1)
             
         # 경고 메시지 표시
         if alert_text:
-            cv2.putText(annotated_frame, alert_text, (90, 130), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 255), 2)
+            cv2.putText(annotated_frame, alert_text, (90, 160), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 255), 2)
         
         # 측정 결과 딕셔너리 반환
         return annotated_frame, {
             "gaze_text": gaze_text,
             "tremor_status": self.tremor_status,
-            "tremor_score": self.current_tremor_score,
+            "tremor_amplitude": self.current_amplitude, 
+            "tremor_frequency": self.current_frequency, 
             "gaze_elapsed_time": elapsed_time
         }
 
     def _detect_tremor(self, results):
-        """떨림 감지 로직을 처리하는 내부 메서드."""
-        self.current_tremor_score = 0.0
+        """떨림 감지 로직을 처리하는 내부 메서드 (수정)."""
+        self.current_amplitude = 0.0
+        self.current_frequency = 0.0
         
         if not results.pose_landmarks:
             self.tremor_status = "(None dectection)"
-            self.nose_history.clear() # 감지 실패 시 이력 초기화
+            self.nose_history_x.clear() 
+            self.nose_history_y.clear()
             return
 
         # 1. 스케일링을 위한 기준점 정의 (귀)
         left_ear = results.pose_landmarks.landmark[LEFT_EAR_INDEX]
         right_ear = results.pose_landmarks.landmark[RIGHT_EAR_INDEX]
 
-        # 2. 스케일 팩터 계산 (귀 사이의 정규화된 거리)
+        # 2. 스케일 팩터 계산 
         scale_factor = math.sqrt(
             (right_ear.x - left_ear.x)**2 + (right_ear.y - left_ear.y)**2
         )
@@ -166,35 +191,47 @@ class AttentionMonitor:
         # 3. 떨림 감지 대상 랜드마크 (코)
         nose_landmark = results.pose_landmarks.landmark[NOSE_INDEX]
         
-        # 랜드마크 가시성(visibility) 확인
         if nose_landmark.visibility > 0.8:
-            # 랜드마크 이력 업데이트 (정규화된 X, Y)
-            self.nose_history.append((nose_landmark.x, nose_landmark.y))
+            
+            # 랜드마크 이력 업데이트
+            self.nose_history_x.append(nose_landmark.x)
+            self.nose_history_y.append(nose_landmark.y)
             
             # 이력 크기 관리
-            if len(self.nose_history) > MAX_HISTORY_FRAMES:
-                self.nose_history.pop(0)
+            if len(self.nose_history_x) > FFT_WINDOW_SIZE:
+                self.nose_history_x.pop(0)
+                self.nose_history_y.pop(0)
 
             # 이력이 충분할 때 떨림 계산
-            if len(self.nose_history) == MAX_HISTORY_FRAMES:
-                x_coords = [p[0] for p in self.nose_history]
-                y_coords = [p[1] for p in self.nose_history]
+            if len(self.nose_history_x) == FFT_WINDOW_SIZE:
                 
-                # 4. 떨림 점수 계산
-                self.current_tremor_score = calculate_tremor(x_coords, y_coords, scale_factor)
+                # 4. 떨림 점수 (진폭 및 주파수) 계산
+                amp, freq = calculate_tremor_parameters(
+                    self.nose_history_x, 
+                    self.nose_history_y, 
+                    scale_factor, 
+                    self.fps
+                )
+                
+                self.current_amplitude = amp
+                self.current_frequency = freq
                 
                 # 떨림 기준치와 비교하여 상태 업데이트
-                if self.current_tremor_score > TREMOR_THRESHOLD:
-                    self.tremor_status = f"(Tremor): {self.current_tremor_score:.5f}"
+                # 떨림 진폭과 주파수가 떨림 대역에 속하는지 동시 확인
+                is_tremor_frequency = freq > 0.0
+                is_significant_amplitude = amp > TREMOR_AMPLITUDE_THRESHOLD
+                
+                if is_tremor_frequency and is_significant_amplitude:
+                    self.tremor_status = f"(Tremor)"
                 else:
-                    self.tremor_status = f"(Stable): {self.current_tremor_score:.5f}"
+                    self.tremor_status = f"(Stable)"
             
         else:
             self.tremor_status = "(Nose not Detection)"
-            self.nose_history.clear() # 랜드마크 손실 시 이력 초기화
+            self.nose_history_x.clear() 
+            self.nose_history_y.clear()
 
     def _check_gaze_status(self, current_time):
-        """시선 상태 및 경고 로직을 처리하는 내부 메서드."""
         gaze_text = ""
         elapsed_time = 0.0
         alert_text = ""
@@ -204,19 +241,15 @@ class AttentionMonitor:
         
         elif self.gaze.is_center():
             gaze_text = "Center"
-            # 중앙을 볼 때 타이머 초기화
             self.gaze_start_time = None
             self.is_gaze_outside_center = False
         
         elif self.gaze.is_right() or self.gaze.is_left():
-            # 중앙을 벗어난 시선
             
             if not self.is_gaze_outside_center:
-                # 새로 벗어났다면 타이머 시작
                 self.gaze_start_time = current_time
                 self.is_gaze_outside_center = True
                 
-            # 경과 시간 계산
             if self.gaze_start_time is not None:
                 elapsed_time = current_time - self.gaze_start_time
                 
@@ -230,9 +263,7 @@ class AttentionMonitor:
             self.gaze_start_time = None
             self.is_gaze_outside_center = False
         
-        # 경고 확인
         if self.is_gaze_outside_center and elapsed_time >= ALERT_THRESHOLD:
-            # 중요한 경고를 위해 메인 텍스트를 덮어씀
             gaze_text = f"distraction: {elapsed_time:.2f}s"
             alert_text = "Caution"
 

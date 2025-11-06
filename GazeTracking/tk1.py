@@ -16,7 +16,6 @@ class App(tk.Tk):
         self.geometry("1920x1080")
         self.resizable(False, False)
 
-        # 배경 이미지 로드 (경로 문제 해결됨)
         try:
             # 캔버스 크기에 맞게 이미지 로드
             self.bg_img = Image.open(BACKGROUND_PATH).resize((1920, 1080), Image.LANCZOS)
@@ -187,7 +186,7 @@ class InterviewPage(BasePage):
     
     # 웹캠 스트리밍 시작 -> 모니터링 시작으로 변경
     def start_monitoring(self):
-        # AttentionMonitor 객체가 이미 존재하고 카메라가 열려있다면 중복 실행 방지
+        #  객체가 이미 존재하고 카메라가 열려있다면 중복 실행 방지
         if self.monitor and self.monitor.cap.isOpened():
             print("INFO: 이미 모니터링이 실행 중입니다.")
             return
@@ -241,9 +240,6 @@ class InterviewPage(BasePage):
             # 4. PIL 이미지로 변환
             img = Image.fromarray(cv2image)
             
-            # 5. Tkinter PhotoImage로 변환 및 참조 유지
-            # Tkinter 레이블 크기에 맞게 이미지 크기를 조정할 수 있습니다.
-            # 여기서는 기본 크기(300x300)에 맞춥니다.
             resized_img = img.resize((self.DEFAULT_CAM_WIDTH, self.DEFAULT_CAM_HEIGHT), Image.LANCZOS)
             self.current_photo = ImageTk.PhotoImage(image=resized_img)
             
