@@ -30,6 +30,15 @@ class IntroGames(tk.Frame):
         self.image3 = PhotoImage(file=relative_to_assets("bimages.png"))
         canvas.create_image(230,468, image=self.image3, anchor="nw")
 
+        self.image4 = PhotoImage(file=relative_to_assets("image_a1.png"))
+        canvas.create_image(650,416, image=self.image4, anchor="nw")
+
+        self.image5 = PhotoImage(file=relative_to_assets("image_a2.png"))
+        canvas.create_image(650,671, image=self.image5, anchor="nw")
+
+        self.image6 = PhotoImage(file=relative_to_assets("image_a3.png"))
+        canvas.create_image(650,926, image=self.image6, anchor="nw")
+
         # 가위바위보 텍스트
         canvas.create_text(
             280,
@@ -63,35 +72,35 @@ class IntroGames(tk.Frame):
 
         # 가위바위보 게임 설명 텍스트
         canvas.create_text(
-            527.0,
+            650.0,
             293.0,
             anchor="nw",
-            text="'나'또는 '상대'의 관점에서 가위바위보를 하는 게임으로,'\n"
-                 "'나'인 경우에는 이기고, '상대'인 경우에는 져야하는 가위바위보입니다.",
+            text="       '나'또는 '상대'의 관점에서 가위바위보를 하는 게임으로,\n"
+                 "'나'인 경우에는 이기고, '상대'인 경우에는 져야하는 게임입니다.",
             fill="#353C92",
-            font=("AnekGurmukhi Light", 24)
+            font=("AnekGurmukhi Light", 22)
         )
 
         # 숫자 누르기 게임 설명 텍스트
         canvas.create_text(
-            589.0,
+            700.0,
             557.0,
             anchor="nw",
             text="신호가 제시되면 주어진 규칙에 맞게 1부터 9까지 숫자 버튼을\n"
-                 "     최대한 빠르고 정확하게 누르면 되는 게임입니다",
+                 "       최대한 빠르고 정확하게 누르면 되는 게임입니다.",
             fill="#353C92",
-            font=("AnekGurmukhi Light", 24)
+            font=("AnekGurmukhi Light", 22)
         )
 
         # 개수비교하기 게임 설명 텍스트
         canvas.create_text(
-            589.0,
-            794.0,
+            700.0,
+            785.0,
             anchor="nw",
-            text="화면 왼쪽과 오른쪽에 단어가 여러 개 제시됩니다.\n"
+            text="    화면 왼쪽과 오른쪽에 단어가 여러 개 제시됩니다.\n"
                  "두 단어 중 어떤 단어의 개수가 더 많았는지 선택해 주세요.",
             fill="#353C92",
-            font=("AnekGurmukhi Light", 24)
+            font=("AnekGurmukhi Light", 22)
         )
 
         
@@ -99,7 +108,7 @@ class IntroGames(tk.Frame):
         # 버튼 이미지
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_2.png"))
         button_1 = Button(self, image=self.button_image_1,
-                          command=lambda: controller.quit(),
+                          command=lambda: controller.show_frame("IntroRSPGame"),
                           borderwidth=0, relief="flat")
         canvas.create_window(1545, 916, window=button_1, anchor="nw")
 
