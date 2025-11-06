@@ -9,10 +9,10 @@ from pages.intro_rsp_game_page import IntroRSPGame
 from pages.rsp_game_page import RSPGame
 from pages.intro_click_num_game_page import IntroClickGame
 from pages.click_num_game_page import ClickGame
-# from pages.intro_compare_quantity_game_page import IntroCompareGame
+from pages.intro_compare_quantity_game_page import IntroCompareGame
 # from pages.compare_quantity_game_page import CompareGame
-# from pages.wait4result_page import WaitResult
-# from pages.result_page import Result
+from pages.wait4result_page import WaitResult
+from pages.result_page import Result
 
 class App(tk.Tk):
     def __init__(self):
@@ -31,7 +31,11 @@ class App(tk.Tk):
             IntroRSPGame,
             RSPGame,
             IntroClickGame,
-            ClickGame
+            ClickGame,
+            IntroCompareGame,
+
+            WaitResult,
+            Result
         )
 
         for PageClass in pages:

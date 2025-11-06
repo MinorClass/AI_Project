@@ -325,7 +325,7 @@ class ClickGame(tk.Frame):
                 self.game_running = False
                 self.status_label.config(text="조건 테스트에서 종료했습니다")
                 # 타이머 끝나면 결과 페이지로 이동
-                self.controller.show_frame("ResultPage")
+                self.controller.show_frame("IntroCompareGame")
 
     # 버튼 클릭 처리
     def button_click(self, num):
