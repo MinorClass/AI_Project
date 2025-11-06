@@ -1,9 +1,10 @@
 """
 GAME LOGIC
-- gameID에 따라 게임이 실행된다.
-- 게임은 30초 동안 진행 -> 시간이 끝나면 종료
-- 랜덤하게 문제가 만들어짐
-- 푼 숫자/ 푼 숫자 내에서의 정답 여부 저장
+- GameLogic
+- GamePerformanceMetrics
+- GameScore
+- GameManager
+- RockPaperScissorsGame
 """
 import time
 import threading

@@ -64,7 +64,7 @@ python demo.py -i xxx -m yyy -d zzz
 * (참고 자료 및 알아두어야할 사항들 기술)
 
 
-### Team: 마이너 클래스
+### Team: 마이너클래스
 <프로젝트 요약>
 * Members
   | Name | Role |
@@ -74,6 +74,4 @@ python demo.py -i xxx -m yyy -d zzz
   | 이승현 | AI modeling, 원하는 결과가 나오도록 AI model을 선택, data 수집,Architect, 프로젝트의 component를 구성하고 상위 디자인을 책임진다.  training을 수행한다. |
   | 이준혁 | UI design, 사용자 인터페이스를 정의하고 구현한다. |
   
-* Project Github : https://github.com/MinorClass/AI_Project.git
-* 발표자료 : https://github.com/goodsense/project_aewsome/doc/slide.ppt
 
