@@ -19,6 +19,7 @@ class App(tk.Tk):
         super().__init__()
         self.title("AI Interview App")
         self.geometry("1920x1080")
+        self.resizable(False, False)
 
         self.frames = {}
         pages = (
