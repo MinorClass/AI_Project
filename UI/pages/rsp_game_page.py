@@ -56,18 +56,21 @@ class RSPGame(tk.Frame):
 
 
         # 버튼 이미지
+        #가위
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
         button_1 = Button(self, image=self.button_image_1,
                           command=lambda: controller.quit(),
                           borderwidth=0, relief="flat")
         canvas.create_window(372, 726, window=button_1, anchor="nw")
 
+        #바위
         self.button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
         button_2 = Button(self, image=self.button_image_2,
                           command=lambda: controller.quit(),
                           borderwidth=0, relief="flat")
         canvas.create_window(774, 726, window=button_2, anchor="nw")
 
+        #보
         self.button_image_3 = PhotoImage(file=relative_to_assets("button_3.png"))
         button_3 = Button(self, image=self.button_image_3,
                           command=lambda: controller.show_frame("IntroClickGame"),
