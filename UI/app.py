@@ -6,8 +6,8 @@ from pages.mock_interview_page import MockInterview
 from pages.wait4game_page import WaitGame
 from pages.introduct_game_page import IntroGames
 from pages.intro_rsp_game_page import IntroRSPGame
-# from pages.rsp_game_page import RSPGame
-# from pages.intro_click_num_game_page import IntroClickGame
+from pages.rsp_game_page import RSPGame
+from pages.intro_click_num_game_page import IntroClickGame
 # from pages.click_num_game_page import ClickGame
 # from pages.intro_compare_quantity_game_page import IntroCompareGame
 # from pages.compare_quantity_game_page import CompareGame
@@ -27,7 +27,9 @@ class App(tk.Tk):
             MockInterview,
             WaitGame,
             IntroGames,
-            IntroRSPGame
+            IntroRSPGame,
+            RSPGame,
+            IntroClickGame
         )
 
         for PageClass in pages:
