@@ -98,7 +98,7 @@ class MockInterview(tk.Frame):
         # 버튼 이미지
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
         button_1 = Button(self, image=self.button_image_1,
-                          command=lambda: controller.quit(),
+                          command=lambda: controller.show_frame("WaitGame"),
                           borderwidth=0, relief="flat")
         canvas.create_window(1548, 865, window=button_1, anchor="nw")
 
@@ -110,7 +110,7 @@ class MockInterview(tk.Frame):
 
     # 타이머 시작
     def start_timer(self):
-        self.remaining_time = 60
+        self.remaining_time = 6
         self.update_timer()
 
     # 타이머 업데이트
@@ -120,9 +120,9 @@ class MockInterview(tk.Frame):
             self.remaining_time -= 1
             # 1초 후 다시 호출
             self.after(1000, self.update_timer)
-        else:
+        # else:
             # 타이머 끝나면 다음 화면으로 이동
-            self.controller.show_frame("ResultPage")  # 원하는 페이지 이름으로 변경
+            # self.controller.show_frame("WaitGame")  # 원하는 페이지 이름으로 변경
 
         
 

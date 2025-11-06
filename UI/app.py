@@ -4,7 +4,7 @@ from pages.first_page import FirstPage
 from pages.camera_check_page import CheckCam
 from pages.mock_interview_page import MockInterview
 from pages.wait4game_page import WaitGame
-# from pages.introduct_game_page import IntroGames
+from pages.introduct_game_page import IntroGames
 # from pages.intro_rsp_game_page import IntroRSPGame
 # from pages.rsp_game_page import RSPGame
 # from pages.intro_click_num_game_page import IntroClickGame
@@ -26,7 +26,7 @@ class App(tk.Tk):
             CheckCam,
             MockInterview,
             WaitGame,
-            
+            IntroGames,
         )
 
         for PageClass in pages:
