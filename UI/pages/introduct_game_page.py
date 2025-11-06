@@ -63,35 +63,35 @@ class IntroGames(tk.Frame):
 
         # 가위바위보 게임 설명 텍스트
         canvas.create_text(
-            527.0,
+            650.0,
             293.0,
             anchor="nw",
-            text="'나'또는 '상대'의 관점에서 가위바위보를 하는 게임으로,'\n"
-                 "'나'인 경우에는 이기고, '상대'인 경우에는 져야하는 가위바위보입니다.",
+            text="       '나'또는 '상대'의 관점에서 가위바위보를 하는 게임으로,\n"
+                 "'나'인 경우에는 이기고, '상대'인 경우에는 져야하는 게임입니다.",
             fill="#353C92",
-            font=("AnekGurmukhi Light", 24)
+            font=("AnekGurmukhi Light", 22)
         )
 
         # 숫자 누르기 게임 설명 텍스트
         canvas.create_text(
-            589.0,
+            700.0,
             557.0,
             anchor="nw",
             text="신호가 제시되면 주어진 규칙에 맞게 1부터 9까지 숫자 버튼을\n"
-                 "     최대한 빠르고 정확하게 누르면 되는 게임입니다",
+                 "       최대한 빠르고 정확하게 누르면 되는 게임입니다.",
             fill="#353C92",
-            font=("AnekGurmukhi Light", 24)
+            font=("AnekGurmukhi Light", 22)
         )
 
         # 개수비교하기 게임 설명 텍스트
         canvas.create_text(
-            589.0,
-            794.0,
+            700.0,
+            785.0,
             anchor="nw",
-            text="화면 왼쪽과 오른쪽에 단어가 여러 개 제시됩니다.\n"
+            text="    화면 왼쪽과 오른쪽에 단어가 여러 개 제시됩니다.\n"
                  "두 단어 중 어떤 단어의 개수가 더 많았는지 선택해 주세요.",
             fill="#353C92",
-            font=("AnekGurmukhi Light", 24)
+            font=("AnekGurmukhi Light", 22)
         )
 
         

@@ -25,8 +25,8 @@ class WaitGame(tk.Frame):
             758.0,
             447.0,
             anchor="nw",
-            text="수고하셨습니다!\n\n"
-            "     게임 시작 전\n"
+            text="    수고하셨습니다!\n\n"
+            "       게임 시작 전\n"
             "잠시 쉬어가겠습니다.",
             fill="#42364C",
             font=("Aldrich Regular", 32)
