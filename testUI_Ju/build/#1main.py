@@ -12,7 +12,7 @@ import os
 
 # OUTPUT_PATH = Path(__file__).parent
 # ASSETS_PATH = OUTPUT_PATH / Path(r"/home/user/AIproject/AI_Project/testUI_Ju/build/assets/frame1")
-ASSETS_PATH = os.path.abspath("./testUI_Ju/build/assets/#1main")
+ASSETS_PATH = os.path.abspath("./testUI_Ju/build/assets/_1main")
 
 
 def relative_to_assets(path: str) -> Path:
