@@ -27,9 +27,9 @@ def relative_to_assets(path: str) -> Path:
 class MockInterview(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
-        
-        self.monitor = AttentionMonitor(camera_index=4) 
+        self.monitor = None
         self.controller = controller
+        
 
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
@@ -112,6 +112,8 @@ class MockInterview(tk.Frame):
         self.camera_update_id = None
         self.is_interview_running = False
 
+
+
     def _fetch_gemini_question(self):
         if not MODEL:
             return "Gemini API 설정에 문제가 있어 질문을 가져올 수 없습니다."
@@ -136,6 +138,7 @@ class MockInterview(tk.Frame):
             self.question_text.set(question)
             
             self.start_timer()
+            self.start_camera()
             self.update_camera() 
 
     def stop_camera_and_quit(self):
@@ -159,8 +162,11 @@ class MockInterview(tk.Frame):
              self.is_interview_running = False
              self.question_text.set("면접 종료! 결과를 확인하세요.")
 
+    def start_camera(self):
+        self.monitor = AttentionMonitor(camera_index=4)
 
     def update_camera(self):
+
         ret, frame = self.monitor.get_frame()
         
         if ret:
@@ -192,7 +198,7 @@ class MockInterview(tk.Frame):
         
 
         if "distraction" in gaze_text:
-            feedback.append(f"눈을 맞추주십시오")
+            feedback.append(f"시선상태 : 눈을 맞추주십시오")
         elif "focus on right" in gaze_text or "focus on left" in gaze_text:
              feedback.append(f"시선 이탈 감지: 중앙을 벗어난 지 {gaze_time:.2f}초 경과.")
         else:

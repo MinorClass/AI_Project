@@ -116,7 +116,7 @@ class AttentionMonitor:
         ret, self.frame = self.cap.read()
         return ret, self.frame
 
-    def process_frame(self):
+    def process_frame(self): #여기서 return으로 값 가지고 옴 
         if self.frame is None:
             return None, "로드된 프레임 없음"
 

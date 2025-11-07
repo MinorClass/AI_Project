@@ -14,7 +14,7 @@ class CheckCam(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
         self.controller = controller
-        self.cap = None
+        self.monitor = None
         self.video_label = None
         self.is_camera_on = False
 
@@ -31,28 +31,29 @@ class CheckCam(tk.Frame):
         # 🔹 카메라 ON 버튼
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
         button_1 = Button(self, image=self.button_image_1,
-                          command=self.start_camera_feed,
+                          command=lambda: controller.quit(),
+                          
                           borderwidth=0, relief="flat")
         canvas.create_window(809, 686, window=button_1, anchor="nw")
 
         # 🔹 앱 종료 버튼
         self.button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
         button_2 = Button(self, image=self.button_image_2,
-                          command=lambda: controller.quit(),
+                          command=self.start_camera_feed,
                           borderwidth=0, relief="flat")
         canvas.create_window(1014, 686, window=button_2, anchor="nw")
 
         # 🔹 다음으로 (MockInterview로 이동)
         self.button_image_3 = PhotoImage(file=relative_to_assets("button_3.png"))
         button_3 = Button(self, image=self.button_image_3,
-                          command=lambda: controller.show_frame("MockInterview"),
+                          command=lambda: self.next_page(),
                           borderwidth=0, relief="flat")
         canvas.create_window(893, 803, window=button_3, anchor="nw")
-
+    
     def start_camera_feed(self):
         """카메라 시작"""
-        self.cap = self.controller.start_camera()
-        if not self.cap or not self.cap.isOpened():
+        self.monitor = cv2.VideoCapture(4)
+        if not self.monitor or not self.monitor.isOpened():
             print("카메라를 열 수 없습니다.")
             return
         self.is_camera_on = True
@@ -60,8 +61,8 @@ class CheckCam(tk.Frame):
 
     def update_frame(self):
         """화면 갱신"""
-        if self.is_camera_on and self.cap:
-            ret, frame = self.cap.read()
+        if self.is_camera_on and self.monitor:
+            ret, frame = self.monitor.read()
             if ret:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 img = Image.fromarray(frame)
@@ -69,3 +70,6 @@ class CheckCam(tk.Frame):
                 self.video_label.imgtk = imgtk
                 self.video_label.configure(image=imgtk)
             self.after(30, self.update_frame)
+    def next_page(self):
+        self.monitor.release()
+        self.controller.show_frame("MockInterview")
