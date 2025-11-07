@@ -34,7 +34,7 @@ def calculate_tremor_parameters(x_history, y_history, scale_factor, fps):
         return 0.0, 0.0 # 진폭, 주파수
 
     # 1. 진폭(Amplitude) 계산 
-    
+
     # 평균 계산
     mean_x = np.mean(x_history)
     mean_y = np.mean(y_history)
@@ -136,11 +136,11 @@ class AttentionMonitor:
 
         # 4. 프레임에 정보 그리기 (수정)
         
-        # 시선 상태 텍스트
-        alert_color = (147, 58, 31) 
-        if alert_text:
-            alert_color = (0, 0, 255) 
-        cv2.putText(annotated_frame, gaze_text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, alert_color, 2)
+        # # 시선 상태 텍스트
+        # alert_color = (147, 58, 31) 
+        # if alert_text:
+        #     alert_color = (0, 0, 255) 
+        # cv2.putText(annotated_frame, gaze_text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, alert_color, 2)
         
         # 떨림 상태 텍스트 (진폭 및 주파수 표시)
         text_color = (255, 255, 255)
@@ -152,8 +152,8 @@ class AttentionMonitor:
         tremor_display = f"Tremor: {self.tremor_status}"
         tremor_info = f"Amp: {self.current_amplitude:.5f} | Freq: {self.current_frequency:.2f}Hz"
         
-        cv2.putText(annotated_frame, tremor_display, (90, 95), cv2.FONT_HERSHEY_DUPLEX, 0.9, text_color, 1) 
-        cv2.putText(annotated_frame, tremor_info, (90, 125), cv2.FONT_HERSHEY_DUPLEX, 0.7, text_color, 1)
+        # cv2.putText(annotated_frame, tremor_display, (90, 95), cv2.FONT_HERSHEY_DUPLEX, 0.9, text_color, 1) 
+        # cv2.putText(annotated_frame, tremor_info, (90, 125), cv2.FONT_HERSHEY_DUPLEX, 0.7, text_color, 1)
             
         # 경고 메시지 표시
         if alert_text:
@@ -168,8 +168,8 @@ class AttentionMonitor:
             "gaze_elapsed_time": elapsed_time
         }
 
-    def _detect_tremor(self, results):
-        """떨림 감지 로직을 처리하는 내부 메서드 (수정)."""
+    def _detect_tremor(self, results): #떨림 감지 
+
         self.current_amplitude = 0.0
         self.current_frequency = 0.0
         
@@ -213,7 +213,7 @@ class AttentionMonitor:
                     self.fps
                 )
                 
-                self.current_amplitude = amp
+                self.current_amplitude = amp #이걸 기준으로 잡아야할듯 
                 self.current_frequency = freq
                 
                 # 떨림 기준치와 비교하여 상태 업데이트
@@ -222,7 +222,7 @@ class AttentionMonitor:
                 is_significant_amplitude = amp > TREMOR_AMPLITUDE_THRESHOLD
                 
                 if is_tremor_frequency and is_significant_amplitude:
-                    self.tremor_status = f"(Tremor)"
+                    self.tremor_status = f"(Tremor)" #아니면 여기서 처리
                 else:
                     self.tremor_status = f"(Stable)"
             
@@ -263,7 +263,7 @@ class AttentionMonitor:
             self.gaze_start_time = None
             self.is_gaze_outside_center = False
         
-        if self.is_gaze_outside_center and elapsed_time >= ALERT_THRESHOLD:
+        if self.is_gaze_outside_center and elapsed_time >= ALERT_THRESHOLD:#집중못한 시간 스코어로 내서 받아와야함
             gaze_text = f"distraction: {elapsed_time:.2f}s"
             alert_text = "Caution"
 
