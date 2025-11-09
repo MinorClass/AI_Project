@@ -46,7 +46,7 @@ class MockInterview(tk.Frame):
         # 질문 텍스트
         canvas.create_text(
             485,
-            807,
+            785,
             anchor="nw",
             text="질문을 내보내야하는 자리입니다",
             fill="#42364C",
@@ -56,7 +56,7 @@ class MockInterview(tk.Frame):
         # feedback 텍스트
         canvas.create_text(
             1270,
-            640,
+            630,
             anchor="nw",
             text="feedback을 내보내야하는 자리입니다",
             fill="#353C92",
