@@ -1,15 +1,20 @@
-import tkinter as tk
-from tkinter import Canvas, Button, PhotoImage
+from tkinter import Canvas, Button, PhotoImage, Tk, font, Frame
+from PIL import Image, ImageTk
+
 import os
 from pathlib import Path
 
 # 에셋 경로 (Figma에서 생성된 이미지들이 들어있는 폴더)
-ASSETS_PATH = os.path.abspath("./UI/assets/first")
+ASSETS_PATH = os.path.abspath("./UI/assets")
+WEIGHT_CENTER = 1920 //2
+HEIGHT_CENTER = 1080 // 2
+MAINCOLOR = "#703BA2"
+# SUBCOLOR = 
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
 
-class FirstPage(tk.Frame):
+class FirstPage(Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
 
@@ -17,8 +22,21 @@ class FirstPage(tk.Frame):
         canvas.pack(fill="both", expand=True)
 
         # 배경 이미지
-        self.bg_image = PhotoImage(file=relative_to_assets("image_1.png"))
+        self.bg_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_background.png")))
         canvas.create_image(960, 540, image=self.bg_image)
+        self.win_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_win.png")))
+        canvas.create_image(960.0, 550.0, image=self.win_image)
+
+        # 상단 타이틀
+        canvas.create_text(
+            WEIGHT_CENTER,
+            160,
+            anchor="center",
+            text="AI 면접 훈련도구",
+            fill='#FFFFFF',
+            font=("Malgun Gothic", 30)
+        )
+
 
         # 상단 텍스트
         canvas.create_text(
@@ -29,6 +47,7 @@ class FirstPage(tk.Frame):
             fill="#42364C",
             font=("Aldrich Regular", 32)
         )
+
 
         # 설명 텍스트
         canvas.create_text(
@@ -42,17 +61,40 @@ class FirstPage(tk.Frame):
             font=("AnekGurmukhi Light", 24)
         )
 
-        # 이미지
-        self.image1 = PhotoImage(file=relative_to_assets("image_2.png"))
-        canvas.create_image(230,147, image=self.image1, anchor="nw")
+        # 시간 안내 영역
+        self.TimeInfo = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_white.png")))
+        canvas.create_image(822,500, image=self.TimeInfo, anchor="nw")
+        canvas.create_text(
+            WEIGHT_CENTER,
+            540,
+            anchor="center",
+            text="총 시간 | 5분",
+            fill=MAINCOLOR,
+            font=("AnekGurmukhi Medium", 20)
+        )
 
-        self.image2 = PhotoImage(file=relative_to_assets("button_1.png"))
-        canvas.create_image(822,517, image=self.image2, anchor="nw")
 
-        # 버튼 이미지
-        self.button_image_1 = PhotoImage(file=relative_to_assets("button_2.png"))
-        button_1 = Button(self, image=self.button_image_1,
-                          command=lambda: controller.show_frame("CheckCam"),
-                          borderwidth=0, relief="flat")
-        canvas.create_window(822, 829, window=button_1, anchor="nw")
 
+        # 시작버튼
+        self.btn_area = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_pupple.png")))
+        btn_start = Button(self, 
+                        image=self.btn_area,
+                        text="시작하기",
+                        font=("AnekGurmukhi Bold", 24),
+                        fg="#FFFFFF",
+                        compound="center",
+                        command=lambda: controller.show_frame("CheckCam"),
+                        borderwidth=0, 
+                        relief='ridge'
+                        )
+        canvas.create_window(WEIGHT_CENTER, 829, window=btn_start, anchor="center")
+        
+        # 시작 텍스트
+        # canvas.create_text(
+        #     WEIGHT_CENTER,
+        #     870,
+        #     anchor="center",
+        #     text="시작하기",
+        #     fill="#FFFFFF",
+        #     font=("AnekGurmukhi Bold", 24)
+        # )

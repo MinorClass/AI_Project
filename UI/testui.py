@@ -24,8 +24,8 @@ canvas = Canvas(
 canvas.place(x=0, y=0)
 
 #background image 넣기
-img_background = Image.open(relative_to_assets("img_background.png"))
-img_back = ImageTk.PhotoImage(img_background)
+# img_background = Image.open(relative_to_assets("img_background.png"))
+img_back = ImageTk.PhotoImage(Image.open(relative_to_assets("img_background.png")))
 canvas.create_image(960,540, image = img_back)
 
 # 배경 이미지 넣기
@@ -39,7 +39,7 @@ canvas.create_image(960, 500, image = img_area_time)
 
 
 # 시작 버튼
-btn_start = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_pupplt.png")))
+btn_start = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_pupple.png")))
 canvas.create_image(960, 830, image = btn_start)
 
 # 타이틀 텍스트
