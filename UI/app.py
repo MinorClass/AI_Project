@@ -44,8 +44,8 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        # self.show_frame("FirstPage")
-        self.show_frame("CheckCam")
+        self.show_frame("FirstPage")
+        # self.show_frame("CheckCam")
 
     def show_frame(self, page_name):
         frame = self.frames[page_name]
