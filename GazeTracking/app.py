@@ -1,5 +1,5 @@
 import tkinter as tk
-from first_page import FirstPage
+# from first_page import FirstPage
 from camera_check_page import CheckCam
 from mock_interview_page import MockInterview
 # from pages.intro_rsp_game_page import IntroRSPGame
@@ -20,7 +20,7 @@ class App(tk.Tk):
 
         self.frames = {}
         pages = (
-            FirstPage,
+            # FirstPage,
             CheckCam,
             MockInterview
         )
@@ -31,7 +31,7 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("FirstPage")
+        self.show_frame("CheckCam")
 
     def show_frame(self, page_name):
         frame = self.frames[page_name]
