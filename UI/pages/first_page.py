@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import Canvas, Button, PhotoImage
 import os
 from pathlib import Path
-
 # 에셋 경로 (Figma에서 생성된 이미지들이 들어있는 폴더)
 ASSETS_PATH = os.path.abspath("./UI/assets/first")
 

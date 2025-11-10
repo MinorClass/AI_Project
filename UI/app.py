@@ -32,8 +32,7 @@ class App(tk.Tk):
         for PageClass in pages:
             page_name = PageClass.__name__
             frame = PageClass(parent=self, controller=self)
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+            self.frames[page_name] = frame  
 
         self.show_frame("FirstPage")
 

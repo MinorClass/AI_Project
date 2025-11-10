@@ -1,9 +1,9 @@
 import cv2
 import mediapipe as mp
-from gaze_tracking import GazeTracking
+from .gaze_tracking import GazeTracking
 import time
 import math
-import numpy as np # ✨ NumPy 라이브러리 추가
+import numpy as np 
 
 # ====================================================================
 # 설정 상수 (개선)
