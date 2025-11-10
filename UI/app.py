@@ -20,7 +20,7 @@ class App(tk.Tk):
         self.title("AI Interview App")
         self.geometry("1920x1080")
         self.resizable(False,False)
-
+        
         self.frames = {}
         pages = (
             FirstPage,
@@ -45,7 +45,7 @@ class App(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         # self.show_frame("FirstPage")
-        self.show_frame("CheckCam")
+        self.show_frame("RSPGame")
 
     def show_frame(self, page_name):
         frame = self.frames[page_name]
