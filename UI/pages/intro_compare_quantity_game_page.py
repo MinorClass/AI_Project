@@ -71,7 +71,7 @@ class IntroCompareGame(tk.Frame):
         # 버튼 이미지
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
         button_1 = Button(self, image=self.button_image_1,
-                          command=lambda: controller.show_frame("WaitResult"),
+                          command=lambda: controller.show_frame("CompareGame"),
                           borderwidth=0, relief="flat")
         canvas.create_window(1246, 768, window=button_1, anchor="nw")
 

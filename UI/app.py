@@ -10,7 +10,7 @@ from pages.rsp_game_page import RSPGame
 from pages.intro_click_num_game_page import IntroClickGame
 from pages.click_num_game_page import ClickGame
 from pages.intro_compare_quantity_game_page import IntroCompareGame
-# from pages.compare_quantity_game_page import CompareGame
+from pages.compare_quantity_game_page import CompareGame
 from pages.wait4result_page import WaitResult
 from pages.result_page import Result
 
@@ -33,7 +33,7 @@ class App(tk.Tk):
             IntroClickGame,
             ClickGame,
             IntroCompareGame,
-
+            CompareGame,
             WaitResult,
             Result
         )
