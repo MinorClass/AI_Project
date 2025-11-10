@@ -33,7 +33,6 @@ class App(tk.Tk):
             IntroClickGame,
             ClickGame,
             IntroCompareGame,
-
             WaitResult,
             Result
         )
