@@ -1,226 +1,219 @@
-from tkinter import Canvas, Button, PhotoImage, Tk, font, Frame, Label
+from tkinter import Canvas, Button, PhotoImage, Frame
 from PIL import Image, ImageTk
 import os
 from pathlib import Path
 import time
 import random
-from typing import Dict, List
+from typing import Dict
 
-# 에셋 경로 (Figma에서 생성된 이미지들이 들어있는 폴더)
+# 에셋 경로 설정
 ASSETS_PATH = os.path.abspath("./UI/assets")
-WIDTH_CENTER = 1920 //2
+WIDTH_CENTER = 1920 // 2
 HEIGHT_CENTER = 1080 // 2
-MAINCOLOR = "#703BA2"
-# SUBCOLOR = 
-
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
 
-# 게임에서 이기는 경우 : 판단 딕셔너리 (key가 value를 이긴다)
+# 승리 규칙: key가 value를 이긴다
 WIN_RULE: Dict[str, str] = {
     "rock": "scissors",
     "scissors": "paper",
     "paper": "rock",
-    "blank" : "blank"
+    "blank": "blank"
 }
-CHOICES = list(WIN_RULE.keys())
-
-# ========================================
-# 가위바위보 게임 페이지
-# ========================================
+CHOICES = ["rock", "paper", "scissors"]
 
 class RSPGame(Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
+        self.controller = controller
 
-        # --- 게임 상태 변수 초기화 ---
+        # --- 게임 상태 변수 ---
         self.is_game_running = False
-        self.duration_time = 30                 # 총 게임 시간
-        self.start_time = 0            
+        self.duration_time = 30
+        self.start_time = 0
         self.remaining_time = 0
-        self.correct_count = 0                  # 맞춘 개수 (승리 횟수)
-        self.total_tries = 0                    # 총 시도한 개수
-        self.opponent_choice = None             # 상대방이 낸 패 (랜덤)
-        self.my_choice = None                   # 내가 낸 패 (랜덤)
-        self.img_card_pick = None
-        self.computer_is_actor = None
 
-        # --- 이미지 로드 ---
+        self.correct_count = 0        # 맞춘 수
+        self.total_tries = 0         # 전체 시도 수 (한 클릭당 +1)
+        self.img_card_pick = None    # 현재 라운드에 '보여진' 카드 값 (rock/paper/scissors)
+        self.computer_is_actor = None  # True -> 상대(왼쪽)가 보여짐; False -> 나(오른쪽)가 보여짐
+
+        # 이미지 캐시
         self.choice_images: Dict[str, ImageTk.PhotoImage] = {}
-        self.load_imgaes()
-        self.card_pick()
+        self.load_images()
 
-
-        # --- UI 구성 ---
+        # UI 세팅
         self.setup_ui()
 
-        # --- 게임 시작 ---
+        # 첫 라운드 준비 (게임 시작 전에 화면에 한쪽 카드가 보이게)
+        # start_game() 호출하면 타이머 시작 및 라운드 반복
         self.start_game()
 
-       
-
-    # 가위바위보 이미지 로드
-    def load_imgaes(self):
-        for choice in CHOICES:
+    # 이미지 로드
+    def load_images(self):
+        for choice in CHOICES + ["blank"]:
             path = relative_to_assets(f"card_{choice}.png")
-            img_card = ImageTk.PhotoImage(Image.open(path))
-            self.choice_images[choice] = img_card
-
-    # UI 구성
-    def setup_ui(self):
-        canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
-        canvas.pack(fill="both", expand=True)
-   
-        # 배경 이미지
-        self.bg_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_background.png")))
-        canvas.create_image(960, 540, image=self.bg_image)
-        self.win_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_win.png")))
-        canvas.create_image(960.0, 550.0, image=self.win_image)
-
-        # 상단 타이틀
-        canvas.create_text( 
-            400,
-            162,
-            anchor="center",
-            text="가위바위보",
-            fill='#FFFFFF',
-            font=("Malgun Gothic", 25)
-        )
-
-        # --- 카드 영역(computer) ---
-        canvas.create_text(WIDTH_CENTER-320,HEIGHT_CENTER-280,
-                           anchor="center", 
-                           text="상대방", font=("Aldrich Bold", 30),
-                           fill ="#000000"
-                           )
-        canvas.create_image(WIDTH_CENTER-320, HEIGHT_CENTER-50, image=self.opponent_choice)
-
-        # --- 카드 영역(me) ---
-        canvas.create_text(WIDTH_CENTER+320,HEIGHT_CENTER-280,
-                           anchor="center", 
-                           text="나", font=("Aldrich Bold", 30),
-                           fill ="#000000"
-                           )
-
-        canvas.create_image(WIDTH_CENTER+320, HEIGHT_CENTER-50, image=self.my_choice)
-
-        # vs 이미지
+            self.choice_images[choice] = ImageTk.PhotoImage(Image.open(path))
+        # 버튼 이미지 (같은 이미지로 사용)
+        self.btn_img = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_pupple.png")))
+        # vs, background, win 이미지 (선택적)
         self.vs_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_vs.png")))
-        canvas.create_image(WIDTH_CENTER, HEIGHT_CENTER-50, image=self.vs_image)
+        self.bg_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_background.png")))
+        # win image may exist; if not, ignore errors externally
 
-        # --- 버튼 영역 ---
-        self.btn_scissors= self.btn_rock= self.btn_paper = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_pupple.png")))
-        # 가위 버튼
-        btn_scissors = Button(self, 
-                              image=self.btn_scissors,
-                              text="가위",
-                              font=("AnekGurmukhi Bold", 30),
-                              fg="#FFFFFF",
-                              compound="center",
-                              command= self.determine_winner('scissors', self.img_card_pick, self.computer_is_actor),
-                              borderwidth=0,
-                              relief="flat")
-        canvas.create_window(WIDTH_CENTER-300, HEIGHT_CENTER+300, window=btn_scissors)
-        # 바위 버튼
-        btn_rock = Button(self, 
-                              image=self.btn_rock,
-                              text="바위",
-                              font=("AnekGurmukhi Bold", 30),
-                              fg="#FFFFFF",
-                              compound="center",
-                              command=self.determine_winner('rock', self.img_card_pick, self.computer_is_actor),
-                              borderwidth=0,
-                              relief="flat")
-        canvas.create_window(WIDTH_CENTER, HEIGHT_CENTER+300, window=btn_rock)
-        # 보 버튼
-        btn_paper = Button(self, 
-                              image=self.btn_paper,
-                              text="보",
-                              font=("AnekGurmukhi Bold", 30),
-                              fg="#FFFFFF",
-                              compound="center",
-                              command=self.determine_winner('paper', self.img_card_pick, self.computer_is_actor),
-                              borderwidth=0,
-                              relief="flat")
-        canvas.create_window(WIDTH_CENTER+300, HEIGHT_CENTER+300, window=btn_paper)
+    # UI 구성 — canvas와 요소들을 인스턴스 ID로 저장
+    def setup_ui(self):
+        self.canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
+        self.canvas.pack(fill="both", expand=True)
 
-        # 게임 조건
-        canvas.create_text(WIDTH_CENTER, HEIGHT_CENTER+200, anchor="center", 
-                           text="내가 이겨야 합니다!", font=("Aldrich Bold", 24),
-                           fill ="#000000"
-                           )
+        # 배경
+        self.canvas.create_image(960, 540, image=self.bg_image)
 
-        # 점수 텍스트
-        canvas.create_text(WIDTH_CENTER,HEIGHT_CENTER-270, anchor="center", 
-                           text=self.total_tries, font=("Aldrich Bold", 30),
-                           fill ="#000000")
-        # Timer 텍스트
-        canvas.create_text(WIDTH_CENTER,HEIGHT_CENTER-210, anchor="center", 
-                           text=self.remaining_time, font=("Aldrich Bold", 20),
-                           fill ="#000000")
+        # 타이틀 / 레이블
+        self.canvas.create_text(400, 162, anchor="center", text="가위바위보",
+                                fill="#FFFFFF", font=("Malgun Gothic", 25))
+        self.canvas.create_text(WIDTH_CENTER-320, HEIGHT_CENTER-280, anchor="center",
+                                text="상대방", font=("Aldrich Bold", 30), fill="#000000")
+        self.canvas.create_text(WIDTH_CENTER+320, HEIGHT_CENTER-280, anchor="center",
+                                text="나", font=("Aldrich Bold", 30), fill="#000000")
 
-    # ========================================
-    # 가위바위보 게임 함수
-    # ========================================
-    
+        # 카드 이미지 자리(초기엔 blank로 설정)
+        self.opponent_image_id = self.canvas.create_image(WIDTH_CENTER-320, HEIGHT_CENTER-50,
+                                                          image=self.choice_images["blank"])
+        self.my_image_id = self.canvas.create_image(WIDTH_CENTER+320, HEIGHT_CENTER-50,
+                                                    image=self.choice_images["blank"])
+
+        # VS 이미지
+        self.canvas.create_image(WIDTH_CENTER, HEIGHT_CENTER-50, image=self.vs_image)
+
+        # 점수/타이머 텍스트 (ID 저장)
+        self.score_text_id = self.canvas.create_text(WIDTH_CENTER, HEIGHT_CENTER-270, anchor="center",
+                                                     text="0 / 0", font=("Aldrich Bold", 30), fill="#000000")
+        self.timer_text_id = self.canvas.create_text(WIDTH_CENTER, HEIGHT_CENTER-210, anchor="center",
+                                                     text="남은 시간: 30초", font=("Aldrich Bold", 20), fill="#000000")
+
+        # 설명 텍스트
+        self.canvas.create_text(WIDTH_CENTER, HEIGHT_CENTER+200, anchor="center",
+                                text="화면에 보이는 쪽을 보고 정답을 선택하세요", font=("Aldrich Bold", 20), fill="#000000")
+
+        # 버튼들: 클릭 시 play_click(choice) 호출
+        btn_scissors = Button(self, image=self.btn_img, text="가위",
+                              font=("AnekGurmukhi Bold", 30), fg="#FFFFFF",
+                              compound="center", command=lambda: self.play_click('scissors'),
+                              borderwidth=0, relief="flat")
+        btn_rock = Button(self, image=self.btn_img, text="바위",
+                          font=("AnekGurmukhi Bold", 30), fg="#FFFFFF",
+                          compound="center", command=lambda: self.play_click('rock'),
+                          borderwidth=0, relief="flat")
+        btn_paper = Button(self, image=self.btn_img, text="보",
+                           font=("AnekGurmukhi Bold", 30), fg="#FFFFFF",
+                           compound="center", command=lambda: self.play_click('paper'),
+                           borderwidth=0, relief="flat")
+
+        self.canvas.create_window(WIDTH_CENTER-300, HEIGHT_CENTER+300, window=btn_scissors)
+        self.canvas.create_window(WIDTH_CENTER,     HEIGHT_CENTER+300, window=btn_rock)
+        self.canvas.create_window(WIDTH_CENTER+300, HEIGHT_CENTER+300, window=btn_paper)
+
+    # UI 갱신: 점수, 타이머, 카드 이미지 갱신
+    def update_ui(self):
+        # 점수 텍스트: correct / total
+        self.canvas.itemconfig(self.score_text_id, text=f"{self.correct_count} / {self.total_tries}")
+        # 타이머 텍스트
+        self.canvas.itemconfig(self.timer_text_id, text=f"남은 시간: {self.remaining_time}초")
+        # 카드 이미지 (현재 라운드의 '보여진' 상태를 반영)
+        # opponent_choice, my_choice는 항상 존재 (이미지 객체)
+        self.canvas.itemconfig(self.opponent_image_id, image=self.opponent_choice)
+        self.canvas.itemconfig(self.my_image_id, image=self.my_choice)
+
+    # 게임 시작: 타이머 시작 후 첫 라운드 준비
     def start_game(self):
-        """게임 시작 및 타이머 초기화"""
         self.is_game_running = True
         self.correct_count = 0
-        self.total_tries = 1
-        # self.update_timer()             # 타이머 시작
-        
-
-    def update_timer(self):
-        """100ms마다 타이머를 업데이트하고 게임 종료를 확인"""
+        self.total_tries = 0
         self.start_time = time.time()
-        while self.is_game_running:
-            self.remaining_time = int(self.duration_time - (time.time()-self.start_time))
+        self.remaining_time = self.duration_time
+        # 즉시 한 라운드를 준비해 화면에 보여줌
+        self.prepare_new_round()
+        # 타이머 갱신 시작
+        self.update_timer()
 
-            if self.remaining_time <= 0:
-                self.is_game_running = False
-                break
+    # 타이머 갱신 (after 기반으로 UI 멈춤 없음)
+    def update_timer(self):
+        if not self.is_game_running:
+            return
+        elapsed = int(time.time() - self.start_time)
+        self.remaining_time = max(0, self.duration_time - elapsed)
+        self.update_ui()
+        if self.remaining_time <= 0:
+            self.end_game()
+            return
+        self.after(100, self.update_timer)
 
-            time.sleep(0.1)
-
-    def determine_winner(self, choice_a :str, choice_b: str, computer_is_actor:bool) ->str:
-        """
-        랜덤 행위자 규칙에 따라 승패를 판단한다
-        Args:
-            choice_a: 사용자가 누른 카드 (rock/scissors/paper).
-            choice_b: 컴퓨터가 랜덤으로 뽑은 카드.
-            computer_is_actor: True면 컴퓨터가 카드를 뽑았고, False면 사용자가 카드를 뽑았습니다.
-        """
-        # 승리조건
-        if computer_is_actor :
-            # key가 valuse를 이긴다
-            if choice_b == WIN_RULE.get(choice_a):
-                self.correct_count += 1
+    # 라운드 준비: 누가 카드를 보일지 랜덤으로 정하고 '보여진' 카드 셋업
+    def prepare_new_round(self):
+        # 랜덤으로 어느 쪽에 문제가 보일지 결정
+        self.computer_is_actor = random.choice([True, False])
+        # 보여지는 카드 결정
+        self.img_card_pick = random.choice(CHOICES)
+        # 셋업: 보여진 쪽에는 카드, 반대쪽은 blank
+        if self.computer_is_actor:
+            # 상대(왼쪽)가 보여짐, 오른쪽은 blank
+            self.opponent_choice = self.choice_images[self.img_card_pick]
+            self.my_choice = self.choice_images["blank"]
         else:
-            if choice_a == WIN_RULE.get(choice_b):
-                self.correct_count += 1
+            # 나(오른쪽)가 보여짐, 왼쪽은 blank
+            self.opponent_choice = self.choice_images["blank"]
+            self.my_choice = self.choice_images[self.img_card_pick]
+        # 화면 반영
+        self.update_ui()
 
+    # 사용자가 버튼을 눌렀을 때 처리
+    # 클릭한 choice는 '사용자가 선택한 카드' 역할을 상황에 따라 다르게 해석
+    def play_click(self, clicked_choice: str):
+        if not self.is_game_running:
+            return
+
+        # 한 번의 클릭이 하나의 라운드 시도
         self.total_tries += 1
 
-        self.card_pick()
-                
+        # 상황 해석:
+        # - 만약 상대가 보여진 상태(computer_is_actor == True):
+        #     상대가 img_card_pick을 보여주고 있으므로 사용자의 클릭은 '내가 낸 카드'로 해석
+        #     -> my_card = clicked_choice, opponent_card = img_card_pick
+        # - 만약 내가 보여진 상태(computer_is_actor == False):
+        #     내가 img_card_pick을 보여주고 있으므로 사용자의 클릭은 '상대가 낸 카드'로 해석
+        #     -> my_card = img_card_pick, opponent_card = clicked_choice
+        if self.computer_is_actor:
+            opponent_card = self.img_card_pick
+            my_card = clicked_choice
+            # 화면: 보여진 상대 카드(왼쪽)와 사용자가 낸 카드(오른쪽) 모두 표시
+            self.opponent_choice = self.choice_images[opponent_card]
+            self.my_choice = self.choice_images[my_card]
+        else:
+            my_card = self.img_card_pick
+            opponent_card = clicked_choice
+            # 화면: 보여진 내 카드(오른쪽)와 사용자가(=상대역) 선택한 카드(왼쪽) 모두 표시
+            self.opponent_choice = self.choice_images[opponent_card]
+            self.my_choice = self.choice_images[my_card]
 
-    def card_pick(self) :
-        """
-        사용자가 버튼을 클릭할때마다 게임 로직 실행
-        """
-    
-        # 1. 누가 무슨 카드를 뽑을지 선택
-        self.computer_is_actor = random.choice([True, False])
-        self.img_card_pick = random.choice(['rock', 'paper', 'scissors'])
-        # 2. 카드 선택
-        if self.computer_is_actor :
-            self.opponent_choice = self.choice_images.get(self.img_card_pick)
-            self.my_choice = self.choice_images.get('blank')
-        else :
-            self.opponent_choice = self.choice_images.get('blank')
-            self.my_choice = self.choice_images.get(self.img_card_pick)
+        # 정답 판단: 항상 '내가 이겨야 정답' 기준
+        if WIN_RULE[my_card] == opponent_card:
+            self.correct_count += 1
 
+        # UI 즉시 갱신해서 선택 결과를 보여줌
+        self.update_ui()
 
-        
+        # 잠깐 결과를 보여준 뒤 다음 라운드로 (0.5초)
+        self.after(500, self.prepare_new_round)
+
+    # 게임 종료: 점수 저장
+    def end_game(self):
+        self.is_game_running = False
+        # 컨트롤러에 correct/total 저장
+        self.controller.scores["rsp"] = {
+            "correct": self.correct_count,
+            "total": self.total_tries
+        }
+        print(f"가위바위보 종료: {self.correct_count}승 / {self.total_tries}판")
+        # 다음 화면 이동은 외부에서 결정하도록 남겨둠
