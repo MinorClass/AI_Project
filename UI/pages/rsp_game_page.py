@@ -67,10 +67,14 @@ class RSPGame(Frame):
         self.canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         self.canvas.pack(fill="both", expand=True)
 
-        # 배경
+        # 배경 이미지
+        self.bg_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_background.png")))
         self.canvas.create_image(960, 540, image=self.bg_image)
 
-        # 타이틀 / 레이블
+        self.win_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_win.png")))
+        self.canvas.create_image(960, 550, image=self.win_image)
+
+        # 타이틀
         self.canvas.create_text(400, 162, anchor="center", text="가위바위보",
                                 fill="#FFFFFF", font=("Malgun Gothic", 25))
         self.canvas.create_text(WIDTH_CENTER-320, HEIGHT_CENTER-280, anchor="center",
@@ -205,7 +209,7 @@ class RSPGame(Frame):
         self.update_ui()
 
         # 잠깐 결과를 보여준 뒤 다음 라운드로 (0.5초)
-        self.after(500, self.prepare_new_round)
+        self.after(100, self.prepare_new_round)
 
     # 게임 종료: 점수 저장
     def end_game(self):
