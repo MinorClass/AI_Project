@@ -13,7 +13,7 @@ import numpy as np
 FFT_WINDOW_SIZE = 64  # 주파수 분석을 위해 추적할 프레임 수 (2의 거듭제곱)
 FPS = 30 # 비디오 캡처 FPS (실제 환경에 맞게 조정 필요)
 TREMOR_FREQUENCY_RANGE = (3.0, 15.0) # 떨림으로 간주할 주파수 대역 (Hz)
-TREMOR_AMPLITUDE_THRESHOLD = 0.05  # 떨림 판단 기준 (정규화된 진폭)
+TREMOR_AMPLITUDE_THRESHOLD = 0.15  # 떨림 판단 기준 (정규화된 진폭)
 
 # 시선 경고 설정 (기존과 동일)
 ALERT_THRESHOLD = 3.0 # 초 (중앙을 벗어난 시선 지속 시간)
@@ -132,7 +132,7 @@ class AttentionMonitor:
         self._detect_tremor(results)
 
         # 3. 시선 상태 로직 실행 (기존과 동일)
-        gaze_text, elapsed_time, alert_text = self._check_gaze_status(current_time)
+        gaze_text, elapsed_time, alert_text, distraction_time = self._check_gaze_status(current_time)
 
         # 4. 프레임에 정보 그리기 (수정)
         
@@ -165,7 +165,8 @@ class AttentionMonitor:
             "tremor_status": self.tremor_status,
             "tremor_amplitude": self.current_amplitude, 
             "tremor_frequency": self.current_frequency, 
-            "gaze_elapsed_time": elapsed_time
+            "gaze_elapsed_time": elapsed_time,
+            "distraction_time": distraction_time,
         }
 
     def _detect_tremor(self, results): #떨림 감지 
@@ -232,39 +233,38 @@ class AttentionMonitor:
             self.nose_history_y.clear()
 
     def _check_gaze_status(self, current_time):
-        gaze_text = ""
-        elapsed_time = 0.0
-        alert_text = ""
-        
-        if self.gaze.is_blinking():
             gaze_text = ""
-        
-        elif self.gaze.is_center():
-            gaze_text = "Center"
-            self.gaze_start_time = None
-            self.is_gaze_outside_center = False
-        
-        elif self.gaze.is_right() or self.gaze.is_left():
+            elapsed_time = 0.0 
+            alert_text = ""
+            distraction_time = 0.0 
             
-            if not self.is_gaze_outside_center:
-                self.gaze_start_time = current_time
-                self.is_gaze_outside_center = True
+            if self.gaze.is_center():
+                gaze_text = "Center"
+                self.gaze_start_time = None
+                self.is_gaze_outside_center = False
+            
+            elif self.gaze.is_right() or self.gaze.is_left():
                 
-            if self.gaze_start_time is not None:
-                elapsed_time = current_time - self.gaze_start_time
-                
-            if self.gaze.is_right():
-                gaze_text = f"focus on right ({elapsed_time:.2f}s)"
-            else: 
-                gaze_text = f"focus on left ({elapsed_time:.2f}s)"
-                
-        else:
-            gaze_text = "None"
-            self.gaze_start_time = None
-            self.is_gaze_outside_center = False
-        
-        if self.is_gaze_outside_center and elapsed_time >= ALERT_THRESHOLD:#집중못한 시간 스코어로 내서 받아와야함
-            gaze_text = f"distraction: {elapsed_time:.2f}s"
-            alert_text = "Caution"
+                if not self.is_gaze_outside_center:
+                    self.gaze_start_time = current_time
+                    self.is_gaze_outside_center = True
+                    
+                if self.gaze_start_time is not None:
+                    elapsed_time = current_time - self.gaze_start_time
+                    
+                if self.gaze.is_right():
+                    gaze_text = f"focus on right ({elapsed_time:.2f}s)"
+                else: 
+                    gaze_text = f"focus on left ({elapsed_time:.2f}s)"
+                    
+            else:
+                gaze_text = "None"
+                self.gaze_start_time = None
+                self.is_gaze_outside_center = False
+            
+            if self.is_gaze_outside_center and elapsed_time >= ALERT_THRESHOLD:
+                gaze_text = f"distraction: {elapsed_time:.2f}s"
+                alert_text = "Caution"
+                distraction_time = elapsed_time # 
 
-        return gaze_text, elapsed_time, alert_text
+            return gaze_text, elapsed_time, alert_text, distraction_time

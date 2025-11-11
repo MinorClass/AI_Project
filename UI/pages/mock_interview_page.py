@@ -29,7 +29,7 @@ class MockInterview(tk.Frame):
         super().__init__(parent, bg="#FFFFFF")
         self.monitor = None
         self.controller = controller
-        
+        self.unfocustime = 0.0
 
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
@@ -79,7 +79,7 @@ class MockInterview(tk.Frame):
         
         # 🌟 2. 피드백 텍스트 레이블 추가
         self.feedback_text = tk.StringVar(self)
-        self.feedback_text.set("웹캠을 켜주세요.")
+        self.feedback_text.set("")
         
         self.feedback_label = tk.Label(self, textvariable=self.feedback_text, 
                                        font=("AnekGurmukhi Light", 18), fg="#353C92", bg="white", 
@@ -145,8 +145,10 @@ class MockInterview(tk.Frame):
         """카메라를 해제하고 애플리케이션을 종료합니다."""
         if self.camera_update_id:
             self.after_cancel(self.camera_update_id) 
-        if self.monitor:
+        if not self.monitor.__del__:
             self.monitor.__del__() 
+        
+        print(self.unfocustime)
         print("카메라 및 면접 모니터링이 중단되었습니다.")
         self.controller.show_frame("WaitGame")
         
@@ -161,15 +163,14 @@ class MockInterview(tk.Frame):
             self.after(1000, self.update_timer)
         else:
              self.is_interview_running = False
+             self.monitor.__del__()
              self.question_text.set("면접 종료! 결과를 확인하세요.")
 
     def start_camera(self):
-        self.monitor = AttentionMonitor(camera_index=0)
+        self.monitor = AttentionMonitor(camera_index=4)
 
     def update_camera(self):
-
         ret, frame = self.monitor.get_frame()
-        
         if ret:
             annotated_frame, results = self.monitor.process_frame()
             
@@ -181,39 +182,37 @@ class MockInterview(tk.Frame):
                 cam_width, cam_height = 300, 300 
                 resized_image = current_image.resize((cam_width, cam_height))
                 self.photo = ImageTk.PhotoImage(image=resized_image)
-                
                 self.video_panel.config(image=self.photo)
                 self.video_panel.image = self.photo 
-                
-                feedback = self._generate_feedback_text(results)
+                feedback, self.unfocustime = self._generate_feedback_text(results,self.unfocustime)
                 self.feedback_text.set(feedback)
+                
             
         self.camera_update_id = self.after(self.delay, self.update_camera)
 
-    def _generate_feedback_text(self, results):
+    def _generate_feedback_text(self, results,unfocustime):
         feedback = []
-        
         # 1. 시선 피드백
         gaze_text = results.get("gaze_text", "None")
         gaze_time = results.get("gaze_elapsed_time", 0.0)
-        
+        gaze_unfoucs = results.get("distraction_time")
 
         if "distraction" in gaze_text:
-            feedback.append(f"시선상태 : 눈을 맞추주십시오")
+            feedback.append(f"시선 상태 : 눈을 맞추주십시오")
         elif "focus on right" in gaze_text or "focus on left" in gaze_text:
-             feedback.append(f"시선 이탈 감지: 중앙을 벗어난 지 {gaze_time:.2f}초 경과.")
+            feedback.append(f"시선 이탈 감지: 중앙을 벗어난 지 {gaze_time:.2f}초 경과.") 
         else:
             feedback.append(f"시선 상태: {gaze_text}")
-            
+        unfocustime = max(gaze_unfoucs,unfocustime)
         # 2. 떨림 피드백
         tremor_status = results.get("tremor_status", "(Stable)")
         
         if "Tremor" in tremor_status:
-            feedback.append("신체 상태 : 불안정 합니다 떨지 마십시오. ")
+            feedback.append("신체 상태 : 불안정  ")
         elif "Stable" in tremor_status:
             feedback.append(f" 신체 상태: 안정적입니다.")
         else:
             feedback.append(f" 신체 상태: 감지 대기 중입니다.")
             
-        return "\n".join(feedback)
+        return "\n".join(feedback),unfocustime
 

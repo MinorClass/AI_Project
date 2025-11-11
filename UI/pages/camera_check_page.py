@@ -62,7 +62,7 @@ class CheckCam(tk.Frame):
 
     def start_camera_feed(self):
         """카메라 시작"""
-        self.monitor = cv2.VideoCapture(0)
+        self.monitor = cv2.VideoCapture(4)
         if not self.monitor or not self.monitor.isOpened():
             print("카메라를 열 수 없습니다.")
             return
@@ -76,10 +76,12 @@ class CheckCam(tk.Frame):
             if ret:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 img = Image.fromarray(frame)
-                imgtk = ImageTk.PhotoImage(image=img)
+                resize_img = img.resize((300,300))
+                imgtk = ImageTk.PhotoImage(image=resize_img)
                 self.video_label.imgtk = imgtk
                 self.video_label.configure(image=imgtk)
             self.after(30, self.update_frame)
     def next_page(self):
-        self.monitor.release()
+        if not self.monitor.release():
+            self.monitor.release()
         self.controller.show_frame("MockInterview")
