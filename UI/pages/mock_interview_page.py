@@ -1,4 +1,4 @@
-from tkinter import Canvas, Button, PhotoImage, Tk, font, Frame, Label
+from tkinter import *
 from PIL import Image, ImageTk
 import os
 from pathlib import Path
@@ -27,12 +27,7 @@ MAINCOLOR = "#703BA2"
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
 
-<<<<<<< HEAD
 class MockInterview(Frame):
-=======
-
-class MockInterview(tk.Frame):
->>>>>>> ffc9a87fed454f905add2139ed1bb2fa5995db9f
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
         self.monitor = None
@@ -42,18 +37,17 @@ class MockInterview(tk.Frame):
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
 
-<<<<<<< HEAD
         # 배경 이미지
         self.bg_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_background.png")))
-        canvas.create_image(960, 540, image=self.bg_image)
+        canvas.create_image(WEIGHT_CENTER, 540, image=self.bg_image)
         self.win_image = ImageTk.PhotoImage(Image.open(relative_to_assets("img_win.png")))
-        canvas.create_image(960.0, 550.0, image=self.win_image)
+        canvas.create_image(WEIGHT_CENTER, 550.0, image=self.win_image)
 
-        ## 헤더 영역
         # 상단 타이틀
         canvas.create_text(
             WEIGHT_CENTER,
             160,
+            justify="center",
             anchor="center",
             text="가상 면접",
             fill='#FFFFFF',
@@ -61,181 +55,80 @@ class MockInterview(tk.Frame):
         )
 
         # 상단 타이틀 - 이전 BUTTON
-        self.btn_previous = ImageTk.PhotoImage(Image.open(relative_to_assets("btn_previous.png")))
+        self.btn_previous = ImageTk.PhotoImage(Image.open(relative_to_assets("button/btn_previous.png")))
         btn_previous = Button(self,
                             image=self.btn_previous,
                             borderwidth=0,
                             relief="flat",
                             command=lambda: controller.show_frame("FirstPage"))
         canvas.create_window(1600, 162, window=btn_previous, anchor="center")
+        
 
-
-        ## 왼쪽 영역
-
-        ## 오른쪽 영역
-
-        # 이미지
-    #     self.image1 = PhotoImage(file=relative_to_assets("bimage_l.png"))
-    #     canvas.create_image(225,210, image=self.image1, anchor="nw")
-=======
-        self.bg_image = PhotoImage(file=relative_to_assets("image_1.png"))
-        canvas.create_image(960, 540, image=self.bg_image)
           # 이미지
-        self.image1 = PhotoImage(file=relative_to_assets("bimage_l.png"))
-        canvas.create_image(225,210, image=self.image1, anchor="nw")
->>>>>>> ffc9a87fed454f905add2139ed1bb2fa5995db9f
+        # self.image1 = PhotoImage(file=relative_to_assets("bimage_l.png"))
+        # canvas.create_image(225,210, image=self.image1, anchor="nw")
 
-    #     self.image2 = PhotoImage(file=relative_to_assets("bimage_r.png"))
-    #     canvas.create_image(955,210, image=self.image2, anchor="nw")
-    #         #가상면접관 이미지 자리
-    #     self.image3 = PhotoImage(file=relative_to_assets("image_v.png"))
-    #     canvas.create_image(735,266, image=self.image3, anchor="nw")
-    #         #질문창
-    #     self.image4 = PhotoImage(file=relative_to_assets("image_q.png"))
-    #     canvas.create_image(419,761, image=self.image4, anchor="nw")
-    #         #feedback창
-    #     self.image5 = PhotoImage(file=relative_to_assets("image_f.png"))
-    #     canvas.create_image(1256,595, image=self.image5, anchor="nw")
-    #         #면접자 cam있어야하는 자리
-    #     self.image6 = PhotoImage(file=relative_to_assets("image_cam.png"))
-    #     canvas.create_image(1310,266, image=self.image6, anchor="nw")
+        # self.image2 = PhotoImage(file=relative_to_assets("bimage_r.png"))
+        # canvas.create_image(955,210, image=self.image2, anchor="nw")
+            #가상면접관 이미지 자리
+        self.image3 = PhotoImage(file=relative_to_assets("mock_interview/image_v.png"))
+        canvas.create_image(735,266, image=self.image3, anchor="nw")
+            #질문창
+        self.image4 = PhotoImage(file=relative_to_assets("mock_interview/image_q.png"))
+        canvas.create_image(419,761, image=self.image4, anchor="nw")
+            #feedback창
+        self.image5 = PhotoImage(file=relative_to_assets("mock_interview/image_f.png"))
+        canvas.create_image(1256,595, image=self.image5, anchor="nw")
+            #면접자 cam있어야하는 자리
+        self.image6 = PhotoImage(file=relative_to_assets("mock_interview/image_cam.png"))
+        canvas.create_image(1310,266, image=self.image6, anchor="nw")
 
-<<<<<<< HEAD
-    #     self.image7 = PhotoImage(file=relative_to_assets("image_2.png"))
-    #     canvas.create_image(230,147, image=self.image7, anchor="nw")
-
-
-    #     # 질문 텍스트
-    #     canvas.create_text(
-    #         485,
-    #         785,
-    #         anchor="nw",
-    #         text="질문을 내보내야하는 자리입니다",
-    #         fill="#42364C",
-    #         font=("Aldrich Regular", 32)
-    #     )
-
-    #     # feedback 텍스트
-    #     canvas.create_text(
-    #         1270,
-    #         630,
-    #         anchor="nw",
-    #         text="feedback을 내보내야하는 자리입니다",
-    #         fill="#353C92",
-    #         font=("AnekGurmukhi Light", 24)
-    #     )
-
-    #     # 버튼 이미지
-    #     #종료
-    #     self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
-    #     button_1 = Button(self, image=self.button_image_1,
-    #                       command=lambda: controller.quit(),
-    #                       borderwidth=0, relief="flat")
-    #     canvas.create_window(1548, 865, window=button_1, anchor="nw")
-    #     #면접시작
-    #     self.button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
-    #     button_2 = Button(self, image=self.button_image_2,
-    #                       command=lambda: controller.quit(),
-    #                       borderwidth=0, relief="flat")
-    #     canvas.create_window(455, 563, window=button_2, anchor="nw")
-
-    #     # 진행시간
-    #     canvas.create_text(
-    #         447,
-    #         452,
-    #         anchor="nw",
-    #         text="진행시간",
-    #         fill="#000000",
-    #         font=("AnekGurmukhi Light", 22)
-    #     )
-
-    #     # 진행시간 라벨 (타이머 표시용)
-    #     canvas.create_text(
-    #         447, 452, anchor="nw",
-    #         text="진행시간", fill="#000000", font=("AnekGurmukhi Light", 22)
-    #     )
-    #     self.timer_label = tk.Label(self, text="60", font=("Arial", 24), bg="#FFFFFF")
-    #     canvas.create_window(445, 500, window=self.timer_label, anchor="nw")
-
-    #     # 버튼 이미지
-    #     self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
-    #     button_1 = Button(self, image=self.button_image_1,
-    #                       command=lambda: controller.show_frame("WaitGame"),
-    #                       borderwidth=0, relief="flat")
-    #     canvas.create_window(1548, 865, window=button_1, anchor="nw")
-
-    #     self.button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
-    #     button_2 = Button(self, image=self.button_image_2,
-    #                       command=self.start_timer,  # ✅ 타이머 시작
-    #                       borderwidth=0, relief="flat")
-    #     canvas.create_window(455, 563, window=button_2, anchor="nw")
-
-    # # 타이머 시작
-    # def start_timer(self):
-    #     self.remaining_time = 6
-    #     self.update_timer()
-
-    # # 타이머 업데이트
-    # def update_timer(self):
-    #     if self.remaining_time > 0:
-    #         self.timer_label.config(text=str(self.remaining_time))
-    #         self.remaining_time -= 1
-    #         # 1초 후 다시 호출
-    #         self.after(1000, self.update_timer)
-    #     # else:
-    #         # 타이머 끝나면 다음 화면으로 이동
-    #         # self.controller.show_frame("WaitGame")  # 원하는 페이지 이름으로 변경
-=======
-        self.image7 = PhotoImage(file=relative_to_assets("image_2.png"))
-        canvas.create_image(230,147, image=self.image7, anchor="nw")
         
         # 6. 면접자 cam 자리 (1310, 266 - nw anchor)
         cam_x, cam_y = 1310, 266 
         
         # Tkinter Label을 생성하고 캔버스에 배치
-        self.video_panel = tk.Label(self) 
+        self.video_panel = Label(self) 
         canvas.create_window(cam_x, cam_y, window=self.video_panel, anchor="nw")
         
         # 🌟 1. 질문 텍스트 변수 및 라벨 추가 (질문창 419, 761 - nw anchor 위치 활용)
-        self.question_text = tk.StringVar(self)
+        self.question_text = StringVar(self)
         self.question_text.set("면접 시작 버튼을 눌러주세요.") 
         
         q_x, q_y = 440, 780 
         q_width = 480 
         
-        self.question_label = tk.Label(self, textvariable=self.question_text, 
+        self.question_label = Label(self, textvariable=self.question_text, 
                                        font=("AnekGurmukhi Light", 18), fg="#353C92", bg="white", 
-                                       justify=tk.LEFT, anchor="nw", wraplength=q_width) # 텍스트 줄바꿈 설정
+                                       justify=LEFT, anchor="nw", wraplength=q_width) # 텍스트 줄바꿈 설정
         canvas.create_window(q_x, q_y, window=self.question_label, anchor="nw")
         
         # 🌟 2. 피드백 텍스트 레이블 추가
-        self.feedback_text = tk.StringVar(self)
+        self.feedback_text = StringVar(self)
         self.feedback_text.set("")
         
-        self.feedback_label = tk.Label(self, textvariable=self.feedback_text, 
+        self.feedback_label = Label(self, textvariable=self.feedback_text, 
                                        font=("AnekGurmukhi Light", 18), fg="#353C92", bg="white", 
-                                       justify=tk.LEFT, anchor="nw")
+                                       justify=LEFT, anchor="nw")
         canvas.create_window(1270, 640, window=self.feedback_label, anchor="nw")
         
-
-        # ... (종료 버튼, 시작 버튼, 진행시간 라벨 - 생략) ...
         # 종료 버튼
-        self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
-        button_1 = Button(self, image=self.button_image_1,
-                          command=self.stop_camera_and_quit, 
+        self.btn_end = PhotoImage(file=relative_to_assets("button/btn_blue.png"))
+        button_1 = Button(self, image= self.btn_end, text="종료", font=("AnekGurmukhi Bold", 16), compound="center",
+                          command= lambda: self.stop_camera_and_quit(), 
                           borderwidth=0, relief="flat")
-        canvas.create_window(1548, 865, window=button_1, anchor="nw")
+        canvas.create_window(1560, 860, window=button_1, anchor="nw")
 
         # 면접시작 버튼
-        self.button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
-        button_2 = Button(self, image=self.button_image_2,
-                          command=self.start_interview,  
+        self.btn_interview_start= PhotoImage(file=relative_to_assets("button/btn_interview_start.png"))
+        button_2 = Button(self, image=self.btn_interview_start,
+                          command=lambda: self.start_interview(),  
                           borderwidth=0, relief="flat")
         canvas.create_window(455, 563, window=button_2, anchor="nw")
         
         # 진행시간 라벨
         canvas.create_text(447, 452, anchor="nw", text="진행시간", fill="#000000", font=("AnekGurmukhi Light", 22))
-        self.timer_label = tk.Label(self, text="60", font=("Arial", 24), bg="#FFFFFF")
+        self.timer_label = Label(self, text="60", font=("Arial", 24), bg="#FFFFFF")
         canvas.create_window(445, 500, window=self.timer_label, anchor="nw")
         
         # 카메라 업데이트 루프를 위한 변수
@@ -265,8 +158,8 @@ class MockInterview(tk.Frame):
             self.is_interview_running = True
             
             #면접 시작 시 Gemini API를 호출하여 질문을 가져와서 업데이트
-            question = self._fetch_gemini_question()
-            self.question_text.set(question)
+            # question = self._fetch_gemini_question()
+            # self.question_text.set(question)
             
             self.start_timer()
             self.start_camera()
@@ -296,7 +189,6 @@ class MockInterview(tk.Frame):
              self.is_interview_running = False
              self.monitor.__del__()
              self.question_text.set("면접 종료! 결과를 확인하세요.")
->>>>>>> ffc9a87fed454f905add2139ed1bb2fa5995db9f
 
     def start_camera(self):
         self.monitor = AttentionMonitor(camera_index=4)

@@ -26,16 +26,16 @@ class App(tk.Tk):
             FirstPage,
             CheckCam,
             MockInterview,
-            WaitGame,
-            IntroGames,
-            IntroRSPGame,
-            RSPGame,
-            IntroClickGame,
-            ClickGame,
-            IntroCompareGame,
-            CompareGame,
-            WaitResult,
-            Result
+            # WaitGame,
+            # IntroGames,
+            # IntroRSPGame,
+            # RSPGame,
+            # IntroClickGame,
+            # ClickGame,
+            # IntroCompareGame,
+            # CompareGame,
+            # WaitResult,
+            # Result
         )
 
         for PageClass in pages:
@@ -44,8 +44,8 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        # self.show_frame("FirstPage")
-        self.show_frame("RSPGame")
+        self.show_frame("FirstPage")
+        # self.show_frame("RSPGame")
 
     def show_frame(self, page_name):
         frame = self.frames[page_name]
