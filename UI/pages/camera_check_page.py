@@ -64,7 +64,7 @@ class CheckCam(Frame):
 
         # 카메라 ON 버튼
         btn_camON = Button(self, width=12, height=2, bg= "#DDDDDD",compound="center", text="카메라 연결",
-                          command= self.start_camera_feed(),
+                          command= self.start_camera_feed,
                           relief="flat")
         canvas.create_window(WEIGHT_CENTER+87, 686, window=btn_camON, anchor="center")
 
@@ -72,13 +72,14 @@ class CheckCam(Frame):
         # 🔹 다음으로 (button_3.png)
         self.button_image_3 = ImageTk.PhotoImage(Image.open(relative_to_assets("button/btn_ready.png")))
         button_3 = Button(self, image=self.button_image_3,
-                          command= self.next_page(),
+                          command= self.next_page,
                           borderwidth=0, relief="flat")
         canvas.create_window(WEIGHT_CENTER, 803, window=button_3, anchor="center")
 
     def start_camera_feed(self):
         """카메라 시작"""
-        self.monitor = cv2.VideoCapture(4)
+        self.monitor = cv2.VideoCapture(6)
+        print(self.monitor.isOpened())
         if not self.monitor or not self.monitor.isOpened():
             print("카메라를 열 수 없습니다.")
             return
@@ -97,7 +98,12 @@ class CheckCam(Frame):
                 self.video_label.imgtk = imgtk
                 self.video_label.configure(image=imgtk)
             self.after(30, self.update_frame)
+    
     def next_page(self):
-        if not self.monitor.release():
+        if self.monitor.isOpened():
             self.monitor.release()
-        # self.controller.show_frame("MockInterview")
+            self.video_label.configure(image='')  # 비디오 라벨 초기화
+        print(self.monitor.isOpened())
+        # if not self.monitor.release():
+            # self.monitor.release()
+        self.controller.show_frame("MockInterview")
