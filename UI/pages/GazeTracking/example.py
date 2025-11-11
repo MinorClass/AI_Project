@@ -129,7 +129,7 @@ class AttentionMonitor:
         results = self.pose_detector.process(rgb_frame)
         
         # 2. 떨림 감지 로직 실행 (수정)
-        self._detect_tremor(results)
+        t_time = self._detect_tremor(results,current_time)
 
         # 3. 시선 상태 로직 실행 (기존과 동일)
         gaze_text, elapsed_time, alert_text, distraction_time = self._check_gaze_status(current_time)
@@ -158,7 +158,8 @@ class AttentionMonitor:
         # 경고 메시지 표시
         if alert_text:
             cv2.putText(annotated_frame, alert_text, (90, 160), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 255), 2)
-        
+        if t_time is None:
+            t_time = 0.0
         # 측정 결과 딕셔너리 반환
         return annotated_frame, {
             "gaze_text": gaze_text,
@@ -167,18 +168,23 @@ class AttentionMonitor:
             "tremor_frequency": self.current_frequency, 
             "gaze_elapsed_time": elapsed_time,
             "distraction_time": distraction_time,
+            "tremor_time": t_time,
         }
 
-    def _detect_tremor(self, results): #떨림 감지 
+    def _detect_tremor(self, results, current_time): #떨림 감지 
 
         self.current_amplitude = 0.0
         self.current_frequency = 0.0
+        tremor_time = 0.0 # 반환할 떨림 지속 시간. 기본값은 0.0
+
         
         if not results.pose_landmarks:
             self.tremor_status = "(None dectection)"
             self.nose_history_x.clear() 
             self.nose_history_y.clear()
-            return
+            self.start_time = None 
+            return tremor_time
+            
 
         # 1. 스케일링을 위한 기준점 정의 (귀)
         left_ear = results.pose_landmarks.landmark[LEFT_EAR_INDEX]
@@ -194,19 +200,15 @@ class AttentionMonitor:
         
         if nose_landmark.visibility > 0.8:
             
-            # 랜드마크 이력 업데이트
             self.nose_history_x.append(nose_landmark.x)
             self.nose_history_y.append(nose_landmark.y)
             
-            # 이력 크기 관리
             if len(self.nose_history_x) > FFT_WINDOW_SIZE:
                 self.nose_history_x.pop(0)
                 self.nose_history_y.pop(0)
 
-            # 이력이 충분할 때 떨림 계산
             if len(self.nose_history_x) == FFT_WINDOW_SIZE:
                 
-                # 4. 떨림 점수 (진폭 및 주파수) 계산
                 amp, freq = calculate_tremor_parameters(
                     self.nose_history_x, 
                     self.nose_history_y, 
@@ -214,23 +216,31 @@ class AttentionMonitor:
                     self.fps
                 )
                 
-                self.current_amplitude = amp #이걸 기준으로 잡아야할듯 
+                self.current_amplitude = amp 
                 self.current_frequency = freq
                 
-                # 떨림 기준치와 비교하여 상태 업데이트
-                # 떨림 진폭과 주파수가 떨림 대역에 속하는지 동시 확인
                 is_tremor_frequency = freq > 0.0
                 is_significant_amplitude = amp > TREMOR_AMPLITUDE_THRESHOLD
                 
                 if is_tremor_frequency and is_significant_amplitude:
-                    self.tremor_status = f"(Tremor)" #아니면 여기서 처리
+                    
+                    if self.start_time is None:
+                        self.start_time = current_time
+                        
+                    self.tremor_status = f"(Tremor)"
+                    tremor_time = current_time - self.start_time 
+                    
                 else:
                     self.tremor_status = f"(Stable)"
+                    self.start_time = None 
             
         else:
             self.tremor_status = "(Nose not Detection)"
             self.nose_history_x.clear() 
             self.nose_history_y.clear()
+            self.start_time = None 
+            
+        return tremor_time
 
     def _check_gaze_status(self, current_time):
             gaze_text = ""

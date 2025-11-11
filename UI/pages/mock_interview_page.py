@@ -30,7 +30,7 @@ class MockInterview(tk.Frame):
         self.monitor = None
         self.controller = controller
         self.unfocustime = 0.0
-
+        self.tremor_time = 0.0
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
 
@@ -149,6 +149,7 @@ class MockInterview(tk.Frame):
             self.monitor.__del__() 
         
         print(self.unfocustime)
+        print(self.tremor_time)
         print("카메라 및 면접 모니터링이 중단되었습니다.")
         self.controller.show_frame("WaitGame")
         
@@ -184,19 +185,20 @@ class MockInterview(tk.Frame):
                 self.photo = ImageTk.PhotoImage(image=resized_image)
                 self.video_panel.config(image=self.photo)
                 self.video_panel.image = self.photo 
-                feedback, self.unfocustime = self._generate_feedback_text(results,self.unfocustime)
+                feedback, self.unfocustime , self.tremor_time = self._generate_feedback_text(results,self.unfocustime,self.tremor_time)
                 self.feedback_text.set(feedback)
                 
             
         self.camera_update_id = self.after(self.delay, self.update_camera)
 
-    def _generate_feedback_text(self, results,unfocustime):
+    def _generate_feedback_text(self, results,unfocustime,tremor_time):
         feedback = []
         # 1. 시선 피드백
         gaze_text = results.get("gaze_text", "None")
         gaze_time = results.get("gaze_elapsed_time", 0.0)
         gaze_unfoucs = results.get("distraction_time")
-
+        tremor_time1 = results.get("tremor_time")
+        
         if "distraction" in gaze_text:
             feedback.append(f"시선 상태 : 눈을 맞추주십시오")
         elif "focus on right" in gaze_text or "focus on left" in gaze_text:
@@ -213,6 +215,6 @@ class MockInterview(tk.Frame):
             feedback.append(f" 신체 상태: 안정적입니다.")
         else:
             feedback.append(f" 신체 상태: 감지 대기 중입니다.")
-            
-        return "\n".join(feedback),unfocustime
+        tremor_time1 = max(tremor_time,tremor_time1)
+        return "\n".join(feedback),unfocustime,tremor_time1
 

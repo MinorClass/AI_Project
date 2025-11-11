@@ -16,7 +16,6 @@ class CheckCam(tk.Frame):
         super().__init__(parent, bg="#FFFFFF")
 
         self.controller = controller
-        # ... (생략) ...
 
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
@@ -48,7 +47,7 @@ class CheckCam(tk.Frame):
         # 💡 PhotoImage -> ImageTk.PhotoImage 로 수정
         self.button_image_2 = ImageTk.PhotoImage(Image.open(relative_to_assets("button_2.png")))
         button_2 = Button(self, image=self.button_image_2,
-                          command=self.start_camera_feed,
+                          command=lambda:self.start_camera_feed(),
                           borderwidth=0, relief="flat")
         canvas.create_window(1014, 686, window=button_2, anchor="nw")
 
