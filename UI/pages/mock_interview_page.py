@@ -6,17 +6,9 @@ import time
 import cv2 
 from PIL import Image, ImageTk 
 from .GazeTracking.example import AttentionMonitor
-import google.generativeai as genai 
 import random
 
-# API_KEY = "AIzaSyBSuHxEGpxivX39ZPjy_cuI1jvDq5MkdyM"  
 
-# try:
-#     genai.configure(api_key=API_KEY)
-#     MODEL = genai.GenerativeModel('gemini-2.5-flash')
-# except Exception as e:
-#     print(f"Gemini API 설정 실패: {e}. 질문 자동 생성 기능이 작동하지 않습니다.")
-#     MODEL = None
 
 ASSETS_PATH = os.path.abspath("./UI/assets")
 WEIGHT_CENTER = 1920 //2
@@ -37,6 +29,9 @@ class MockInterview(Frame):
         self.controller = controller
         self.unfocustime = 0.0
         self.tremor_time = 0.0
+        RESULTSCORE = (0.0, 0.0)
+        self.max_questions = 3
+
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
 
@@ -139,36 +134,55 @@ class MockInterview(Frame):
         self.camera_update_id = None
         self.is_interview_running = False
 
-
-
-    # def _fetch_gemini_question(self):
-    #     if not MODEL:
-    #         return "Gemini API 설정에 문제가 있어 질문을 가져올 수 없습니다."
-        
-    #     try:
-    #         question = "한국인 면접관으로 랜덤 질문 하나만 내봐 질문만 간결하게 답해줘"
-    #         # 불필요한 공백/줄바꿈 제거 후 반환
-    #         response = MODEL.generate_content(question)
-    #         return response.text.strip()
-            
-    #     except Exception as e:
-    #         return f"질문 생성 중 오류 발생: {e}"
-
-
     def start_interview(self):
-        """면접 시작 시 질문을 가져오고 타이머 및 카메라 스트림을 시작합니다."""
         if not self.is_interview_running:
             self.is_interview_running = True
             
-            #면접 시작 시 Gemini API를 호출하여 질문을 가져와서 업데이트
-            question = random.sample(qustion_list, k=1)
-            self.question_text.set(question)
-            
-            self.start_timer()
+            self.question_index = 0 
             self.start_camera()
             self.update_camera() 
+            self.next_question() 
+
+    def next_question(self):
+
+        if self.question_index < self.max_questions:
+            # 🌟 다음 질문을 가져와 설정
+            question = random.sample(qustion_list, k=1)[0] # sample은 리스트를 반환하므로 [0] 사용
+            self.question_text.set(f"[{self.question_index + 1}/{self.max_questions}] {question}")
+            print(question)
+            self.start_timer()
+            self.question_index += 1
+        else:
+            # 모든 질문이 끝났을 때
+            self.is_interview_running = False
+            self.monitor.__del__()
+            self.question_text.set("모든 질문 완료! 결과를 확인하세요.")
+
+    def update_timer(self):
+        if self.remaining_time > 0:
+            self.timer_label.config(text=str(self.remaining_time))
+            self.remaining_time -= 1
+            self.after(1000, self.update_timer)
+        else:
+             self.timer_label.config(text="0")
+             self.next_question() 
+
+    def start_timer(self):
+        # 타이머 시작은 그대로 둡니다.
+        self.remaining_time = 60
+        self.update_timer()
+
+    def start_camera(self):
+        self.monitor = AttentionMonitor(camera_index=4)
 
     def stop_camera_and_quit(self):
+        RESULTSCORE = self.get_parameter
+        self.controller.scores["unfocus"] = {
+            "time": self.unfocustime,
+        }
+        self.controller.scores["tremor"] = {
+            "time": self.tremor_time,
+        }
         """카메라를 해제하고 애플리케이션을 종료합니다."""
         if self.camera_update_id:
             self.after_cancel(self.camera_update_id) 
@@ -179,23 +193,8 @@ class MockInterview(Frame):
         print(self.tremor_time)
         print("카메라 및 면접 모니터링이 중단되었습니다.")
         self.controller.show_frame("WaitGame")
-        
-    def start_timer(self):
-        self.remaining_time = 60 #
-        self.update_timer()
 
-    def update_timer(self):
-        if self.remaining_time > 0:
-            self.timer_label.config(text=str(self.remaining_time))
-            self.remaining_time -= 1
-            self.after(1000, self.update_timer)
-        else:
-             self.is_interview_running = False
-             self.monitor.__del__()
-             self.question_text.set("면접 종료! 결과를 확인하세요.")
 
-    def start_camera(self):
-        self.monitor = AttentionMonitor(camera_index=4)
 
     def update_camera(self):
         ret, frame = self.monitor.get_frame()
