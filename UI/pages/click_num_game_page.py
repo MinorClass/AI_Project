@@ -48,7 +48,7 @@ class ClickGame(tk.Frame):
         )
         # score와 total은 같은 라인으로 보여주도록 변경
         self.score_text = self.canvas.create_text(
-            1250, 266, anchor="nw", text="score : 0 / 0",
+            1250, 266, anchor="nw", text="푼 문제 : 0",
             fill="#FF5D00", font=("Baloo2 Regular", 28)
         )
 
@@ -71,14 +71,14 @@ class ClickGame(tk.Frame):
         self.button_window_ids = [None] * 9
 
         # 우측 상단 / 중앙 시작 버튼 (이미지 로드 예외 처리)
-        try:
-            self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
-            button_1 = Button(self, image=self.button_image_1,
-                              borderwidth=0, relief="flat",
-                              command=lambda: controller.show_frame("IntroClickGame"))
-            self.canvas.create_window(1451, 140, window=button_1, anchor="nw")
-        except Exception:
-            pass
+        # try:
+        #     self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
+        #     button_1 = Button(self, image=self.button_image_1,
+        #                       borderwidth=0, relief="flat",
+        #                       command=lambda: controller.show_frame("IntroClickGame"))
+        #     self.canvas.create_window(1451, 140, window=button_1, anchor="nw")
+        # except Exception:
+        #     pass
 
         try:
             self.button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
@@ -142,7 +142,7 @@ class ClickGame(tk.Frame):
         self.current_sequence = self.generate_sequence()
         self.player_progress = []
         # score_text shows "score : correct / total"
-        self.canvas.itemconfig(self.score_text, text="score : 0 / 0")
+        self.canvas.itemconfig(self.score_text, text="푼 문제 : 0")
         self.canvas.itemconfig(self.timer_text, text="00:30")
         self.status_label.config(text=self.sequence_description(self.current_sequence))
         self.shuffle_buttons()
@@ -181,7 +181,7 @@ class ClickGame(tk.Frame):
                 self.score += 1
                 self.total_questions += 1
                 # score 텍스트는 "score : correct / total"
-                self.canvas.itemconfig(self.score_text, text=f"score : {self.score} / {self.total_questions}")
+                self.canvas.itemconfig(self.score_text, text=f"푼 문제 : {self.total_questions}")
                 # 다음 문제로
                 self.current_sequence = self.generate_sequence()
                 self.player_progress = []
@@ -191,7 +191,7 @@ class ClickGame(tk.Frame):
             # 틀린 경우: 한 문제로 카운트하고 다음 문제로
             self.total_questions += 1
             # 업데이트된 score/total 표시
-            self.canvas.itemconfig(self.score_text, text=f"score : {self.score} / {self.total_questions}")
+            self.canvas.itemconfig(self.score_text, text=f"푼 문제 : {self.total_questions}")
             self.player_progress = []
             self.current_sequence = self.generate_sequence()
             self.status_label.config(text=self.sequence_description(self.current_sequence))

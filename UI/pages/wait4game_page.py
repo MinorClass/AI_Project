@@ -22,8 +22,8 @@ class WaitGame(tk.Frame):
 
         # 상단 텍스트
         canvas.create_text(
-            758.0,
-            447.0,
+            750.0,
+            400.0,
             anchor="nw",
             text="    수고하셨습니다!\n\n"
             "       게임 시작 전\n"

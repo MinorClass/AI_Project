@@ -33,8 +33,9 @@ class CheckCam(tk.Frame):
 
         # 이미지 (image_2.png)
         # 💡 PhotoImage -> ImageTk.PhotoImage 로 수정
-        self.image1 = ImageTk.PhotoImage(Image.open(relative_to_assets("image_2.png")))
-        canvas.create_image(230,147, image=self.image1, anchor="nw")
+
+        # self.image1 = ImageTk.PhotoImage(Image.open(relative_to_assets("image_2.png")))
+        # canvas.create_image(230,147, image=self.image1, anchor="nw")
 
         # 카메라 ON 버튼 (button_1.png)
         # 💡 PhotoImage -> ImageTk.PhotoImage 로 수정
@@ -84,4 +85,5 @@ class CheckCam(tk.Frame):
     def next_page(self):
         if not self.monitor.release():
             self.monitor.release()
-        self.controller.show_frame("MockInterview")
+        # self.controller.show_frame("MockInterview")
+        self.controller.show_frame("WaitGame")

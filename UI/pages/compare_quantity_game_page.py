@@ -52,7 +52,7 @@ class CompareGame(tk.Frame):
         self.left_img = PhotoImage(file=self.relative_to_assets("image_4.png"))
         self.right_img = PhotoImage(file=self.relative_to_assets("image_3.png"))
         self.center_img = PhotoImage(file=self.relative_to_assets("image_5.png"))
-        self.btn_img_1 = PhotoImage(file=self.relative_to_assets("button_1.png"))
+        # self.btn_img_1 = PhotoImage(file=self.relative_to_assets("button_1.png"))
         self.btn_img_2 = PhotoImage(file=self.relative_to_assets("button_2.png"))
 
     def setup_ui(self):
@@ -76,7 +76,7 @@ class CompareGame(tk.Frame):
         # 추가: 실시간 점수 / 총 푼 문제 수 표시
         # 위치와 폰트는 필요에 따라 조정해
         self.score_status_id = self.canvas.create_text(1411, 222, anchor="nw",
-                                                       text=f"맞춘 수 : 0    푼 문제 : 0",
+                                                       text=f"푼 문제 : 0",
                                                        fill="#000000", font=("Inter Light", 18))
 
         # 정보 라벨
@@ -84,13 +84,13 @@ class CompareGame(tk.Frame):
         self.canvas.create_window(960, 940, window=self.info_label)
 
         # 상단 버튼들 (기능은 필요에 따라 수정)
-        self.button_1 = Button(self, image=self.btn_img_1, borderwidth=0, highlightthickness=0,
-                               command=lambda: print("button_1 clicked"), relief="flat")
-        self.canvas.create_window(1501, 147, window=self.button_1, width=168, height=66)
+        # self.button_1 = Button(self, image=self.btn_img_1, borderwidth=0, highlightthickness=0,
+        #                        command=lambda: print("button_1 clicked"), relief="flat")
+        # self.canvas.create_window(1501, 147, window=self.button_1, width=168, height=66)
 
         self.start_button = Button(self, image=self.btn_img_2, borderwidth=0, highlightthickness=0,
                                    command=self.start_game, relief="flat")
-        self.canvas.create_window(830, 258, window=self.start_button, width=257, height=81)
+        self.canvas.create_window(950, 280, window=self.start_button, width=257, height=81)
 
     def bind_events(self):
         # 캔버스 클릭 핸들링
@@ -113,7 +113,7 @@ class CompareGame(tk.Frame):
 
         elapsed = int(time.time() - self.start_time)
         h, m, s = elapsed // 3600, (elapsed % 3600) // 60, elapsed % 60
-        self.canvas.itemconfig(self.timer_text_id, text=f"진행시간\n{h:02d}:{m:02d}:{s:02d}")
+        self.canvas.itemconfig(self.timer_text_id, text=f"진행시간\n{m:02d}:{s:02d}")
 
         if self.timer_after_id:
             self.after_cancel(self.timer_after_id)
@@ -162,7 +162,7 @@ class CompareGame(tk.Frame):
 
     def _update_score_status(self):
         # 실시간 점수 / 총 푼 문제 수 UI 갱신
-        self.canvas.itemconfig(self.score_status_id, text=f"맞춘 수 : {self.score}    푼 문제 : {self.total_answered}")
+        self.canvas.itemconfig(self.score_status_id, text=f"푼 문제 : {self.total_answered}")
 
     def judge_answer(self, selected_word):
         # 정답 제출 허용 상태에서만 처리
