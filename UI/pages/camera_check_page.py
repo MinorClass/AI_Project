@@ -78,32 +78,46 @@ class CheckCam(Frame):
 
     def start_camera_feed(self):
         """카메라 시작"""
-        self.monitor = cv2.VideoCapture(6)
+        self.monitor = cv2.VideoCapture(0)
         print(self.monitor.isOpened())
         if not self.monitor or not self.monitor.isOpened():
             print("카메라를 열 수 없습니다.")
             return
-        self.is_camera_on = True
+        # self.is_camera_on = True
         self.update_frame()
 
     def update_frame(self):
         """화면 갱신"""
-        if self.is_camera_on and self.monitor:
-            ret, frame = self.monitor.read()
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                img = Image.fromarray(frame)
-                resize_img = img.resize((300,300))
-                imgtk = ImageTk.PhotoImage(image=resize_img)
-                self.video_label.imgtk = imgtk
-                self.video_label.configure(image=imgtk)
+        ret, frame = self.monitor.read()
+        if frame is None:
+            pass            
+        else:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            resize_img = img.resize((300,300))
+            imgtk = ImageTk.PhotoImage(image=resize_img)
+            self.video_label.imgtk = imgtk
+            self.video_label.configure(image=imgtk)
             self.after(30, self.update_frame)
+
+        # if self.is_camera_on and self.monitor:
+        #     ret, frame = self.monitor.read()
+        #     if ret:
+        #         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        #         img = Image.fromarray(frame)
+        #         resize_img = img.resize((300,300))
+        #         imgtk = ImageTk.PhotoImage(image=resize_img)
+        #         self.video_label.imgtk = imgtk
+        #         self.video_label.configure(image=imgtk)
+        #     self.after(30, self.update_frame)
     
     def next_page(self):
         if self.monitor.isOpened():
             self.monitor.release()
+            # self.is_camera_on = False
             self.video_label.configure(image='')  # 비디오 라벨 초기화
-        print(self.monitor.isOpened())
+        # print(self.monitor.isOpened())
         # if not self.monitor.release():
             # self.monitor.release()
         self.controller.show_frame("MockInterview")
+
