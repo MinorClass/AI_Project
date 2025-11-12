@@ -45,23 +45,17 @@ class Result(tk.Frame):
         except Exception:
             self.image1 = None
 
-        # 왼쪽 결과 박스 이미지
-        try:
-            self.image_r_left = PhotoImage(file=relative_to_assets("image_r.png"))
-            self.canvas.create_image(267, 275, image=self.image_r_left, anchor="nw")
-        except Exception:
-            self.image_r_left = None
 
         # 🌟 1. 왼쪽 심리 분석 텍스트 라벨 추가
         self.analysis_text = tk.StringVar(self)
         self.analysis_text.set("결과 분석을 시작합니다...") 
         
         # 텍스트가 표시될 라벨 생성 (좌표는 이미지 박스 내부에 맞게 조정)
-        analysis_x, analysis_y = 280, 300 
-        analysis_width = 400  # 텍스트 줄바꿈 너비
+        analysis_x, analysis_y = 280, 280 
+        analysis_width = 600  # 텍스트 줄바꿈 너비
         
         self.analysis_label = tk.Label(self, textvariable=self.analysis_text, 
-                                       font=("Arial", 14), fg="#353C92", bg="white", 
+                                       font=("Arial", 14), fg="#353C92", 
                                        justify=tk.LEFT, anchor="nw", wraplength=analysis_width)
         self.canvas.create_window(analysis_x, analysis_y, window=self.analysis_label, anchor="nw")
 
@@ -129,10 +123,9 @@ class Result(tk.Frame):
         prompt = "가위,바위,보 게임은 나또는 상대의 관점에서 가위바위보를 하는 게임으로, " \
         "나인 경우에는 이기고, 상대인 경우에는 져야하는 게임이다. 숫자 누르기 게임은 신호가 제시되면 주어진 규칙에 맞게 1부터 9까지 숫자 버튼을 최대한 빠르고 정확하게 누르면 되는 게임입니다. " \
         "개수 비교하기 게임은 화면 왼쪽과 오른쪽에 단어가 여러 개 제시됩니다. 두 단어 중 어떤 단어의 개수가 더 많았는지 선택하는 게임야. 이 게임들의 점수를 가지고 각 게임들에게 필요한 요소, 능력, 역량, 요구사항, 기술 등을 키워드로 삼아 개선점이나 보완해야 할 역량들을 서술해줘. " \
-        "100자 이내로그리고 집중 안 한시간, 떨어버린 시간이 있는데 그것은 면접 중 집중 안 한 시간은 시선 처리, 떨어버린 시간은 몸의 떨림을 통해 도출해낸 점수야. " \
+        "50자 이내로그리고 집중 안 한시간, 떨어버린 시간이 있는데 그것은 면접 중 집중 안 한 시간은 시선 처리, 떨어버린 시간은 몸의 떨림을 통해 도출해낸 점수야. " \
         "이것을 통해 어땠는지 그리고 다음 향후 방안이나 개선점을 통합점으로 설명해줘. " \
-        "100자 이내로 그리고 마지막으로 이 모든 것을 통합하여 심리 상태에 대해 분석하고, 개선 방안을 포괄적으로 만들어줘 200자 이내로" 
-        + self.text
+        "50자 이내로 그리고 마지막으로 이 모든 것을 통합하여 심리 상태에 대해 분석하고, 개선 방안을 포괄적으로 만들어줘 100자 이내로" + self.text
 
         try:
             self.analysis_text.set("AI 심리 분석 중입니다... 잠시만 기다려 주세요.")
