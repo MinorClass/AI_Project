@@ -14,7 +14,7 @@ class CompareGame(tk.Frame):
         self.controller = controller
 
         # 리소스 / 설정
-        self.WORDS = ["준혁", "혜인", "승현", "준희"]
+        self.WORDS = ["준혁", "해인", "승현", "준희","Intel","마스터","마이너","클래스","화이팅"]
         self.TOTAL_QUESTIONS = 10
         self.LEFT_AREA = (336, 388, 836, 888)
         self.RIGHT_AREA = (1085, 388, 1585, 888)

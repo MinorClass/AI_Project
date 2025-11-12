@@ -20,10 +20,7 @@ class CheckCam(Frame):
         super().__init__(parent, bg="#FFFFFF")
 
         self.controller = controller
-<<<<<<< HEAD
         # self.is_camera_on = False
-=======
->>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
 
             
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
@@ -45,7 +42,6 @@ class CheckCam(Frame):
             font=("Malgun Gothic", 25)
         )
 
-<<<<<<< HEAD
         # 상단 타이틀 - 이전 BUTTON
         self.btn_previous = ImageTk.PhotoImage(Image.open(relative_to_assets("button/btn_previous.png")))
         btn_previous = Button(self,
@@ -54,13 +50,6 @@ class CheckCam(Frame):
                             relief="flat",
                             command= controller.show_frame("FirstPage"))
         canvas.create_window(1600, 162, window=btn_previous, anchor="center")
-=======
-        # 이미지 (image_2.png)
-        # 💡 PhotoImage -> ImageTk.PhotoImage 로 수정
-
-        # self.image1 = ImageTk.PhotoImage(Image.open(relative_to_assets("image_2.png")))
-        # canvas.create_image(230,147, image=self.image1, anchor="nw")
->>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
 
         # 카메라 피드 표시 영역
         self.video_label = Label(self,bg="#000000")
@@ -79,16 +68,6 @@ class CheckCam(Frame):
                           relief="flat")
         canvas.create_window(WEIGHT_CENTER+87, 686, window=btn_camON, anchor="center")
 
-<<<<<<< HEAD
-=======
-        # 🔹 앱 종료 버튼 (button_2.png)
-        # 💡 PhotoImage -> ImageTk.PhotoImage 로 수정
-        self.button_image_2 = ImageTk.PhotoImage(Image.open(relative_to_assets("button_2.png")))
-        button_2 = Button(self, image=self.button_image_2,
-                          command=lambda:self.start_camera_feed(),
-                          borderwidth=0, relief="flat")
-        canvas.create_window(1014, 686, window=button_2, anchor="nw")
->>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
 
         # 🔹 다음으로 (button_3.png)
         self.button_image_3 = ImageTk.PhotoImage(Image.open(relative_to_assets("button/btn_ready.png")))
@@ -99,7 +78,7 @@ class CheckCam(Frame):
 
     def start_camera_feed(self):
         """카메라 시작"""
-        self.monitor = cv2.VideoCapture(0)
+        self.monitor = cv2.VideoCapture(4)
         print(self.monitor.isOpened())
         if not self.monitor or not self.monitor.isOpened():
             print("카메라를 열 수 없습니다.")
@@ -135,7 +114,6 @@ class CheckCam(Frame):
     def next_page(self):
         if self.monitor.isOpened():
             self.monitor.release()
-<<<<<<< HEAD
             # self.is_camera_on = False
             self.video_label.configure(image='')  # 비디오 라벨 초기화
         # print(self.monitor.isOpened())
@@ -143,7 +121,3 @@ class CheckCam(Frame):
             # self.monitor.release()
         self.controller.show_frame("MockInterview")
 
-=======
-        # self.controller.show_frame("MockInterview")
-        self.controller.show_frame("WaitGame")
->>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62

@@ -2,7 +2,7 @@ import tkinter as tk
 
 from pages.first_page import FirstPage
 from pages.camera_check_page import CheckCam
-# from pages.mock_interview_page import MockInterview
+from pages.mock_interview_page import MockInterview
 from pages.wait4game_page import WaitGame
 from pages.introduct_game_page import IntroGames
 from pages.intro_rsp_game_page import IntroRSPGame
@@ -32,20 +32,7 @@ class App(tk.Tk):
         pages = (
             FirstPage,
             CheckCam,
-<<<<<<< HEAD
             MockInterview,
-            # WaitGame,
-            # IntroGames,
-            # IntroRSPGame,
-            # RSPGame,
-            # IntroClickGame,
-            # ClickGame,
-            # IntroCompareGame,
-            # CompareGame,
-            # WaitResult,
-            # Result
-=======
-            # MockInterview,
             WaitGame,
             IntroGames,
             IntroRSPGame,
@@ -56,7 +43,6 @@ class App(tk.Tk):
             CompareGame,
             WaitResult,
             Result
->>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
         )
 
         for PageClass in pages:
@@ -65,13 +51,8 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-<<<<<<< HEAD
         self.show_frame("FirstPage")
-        # self.show_frame("RSPGame")
-=======
-        # self.show_frame("FirstPage")
-        self.show_frame("CompareGame")
->>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
+        # self.show_frame("Result")
 
     def show_frame(self, page_name: str):
         frame = self.frames.get(page_name)

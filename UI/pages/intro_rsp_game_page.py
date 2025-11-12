@@ -95,7 +95,7 @@ class IntroRSPGame(tk.Frame):
         )
 
         # 목표 설명 텍스트
-        canvas.creategit_text(
+        canvas.create_text(
             1115.0,
             448,
             anchor="nw",

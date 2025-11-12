@@ -42,18 +42,11 @@ class FirstPage(Frame):
 
         # 상단 텍스트
         canvas.create_text(
-<<<<<<< HEAD
             WEIGHT_CENTER,
             370.0,
             justify= "center",
             anchor="center",
             text="부족한 면접 경험을 AI와 함께\n채워 나가보세요",
-=======
-            662.0,
-            300.0,
-            anchor="nw",
-            text="부족한 면접 경험을 AI와 함께\n" "          채워 나가보세요.",
->>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
             fill="#42364C",
             font=("Aldrich Regular", 32)
         )
@@ -61,21 +54,12 @@ class FirstPage(Frame):
 
         # 설명 텍스트
         canvas.create_text(
-<<<<<<< HEAD
             WEIGHT_CENTER,
             680.0,
             anchor="center",
             text="AI가 내 면접을 분석하고 판단하여 도움을 줘요\n"
                  "영상 면접 환경과 실제 면접의 훈련을 할 수 있어요\n"
                  "마지막 피드백을 통해 고쳐야 할 점을 알 수 있어요",
-=======
-            630,
-            605.0,
-            anchor="nw",
-            text="    AI가 내 면접을 분석하고 판단하여 도움을 줘요.\n"
-                 "  영상 면접 환경과 실제 면접의 훈련을 할 수 있어요.\n"
-                 "  마지막 피드백을 통해 고쳐야 할 점을 알 수 있어요.",
->>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
             fill="#353C92",
             font=("AnekGurmukhi Light", 20)
         )

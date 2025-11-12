@@ -18,17 +18,14 @@ import random
 #     print(f"Gemini API 설정 실패: {e}. 질문 자동 생성 기능이 작동하지 않습니다.")
 #     MODEL = None
 
-<<<<<<< HEAD
 ASSETS_PATH = os.path.abspath("./UI/assets")
 WEIGHT_CENTER = 1920 //2
 HEIGHT_CENTER = 1080 // 2
 MAINCOLOR = "#703BA2"
 # SUBCOLOR = 
-=======
 qustion_list = ["5년 후 본인의 커리어 목표와 그 목표 달성을 위한 구체적인 계획은 무엇입니까?","지원하신 직무와 관련하여 본인이 가진 가장 큰 강점과 약점은 무엇이며, 약점을 극복하기 위해 어떤 노력을 하고 있습니까?","1분 동안 본인 소개를 해주십시오.","살면서 가장 큰 성공 경험과 실패 경험을 각각 이야기해 주십시오.","스트레스 해소 방법이나 본인만의 원동력은 무엇입니까?",
                 "입사 후 가장 먼저 하고 싶은 일은 무엇이며, 회사에 어떻게 기여할 수 있습니까?"]
-ASSETS_PATH = os.path.abspath("./UI/assets/mock_interview")
->>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
+
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
@@ -164,13 +161,8 @@ class MockInterview(Frame):
             self.is_interview_running = True
             
             #면접 시작 시 Gemini API를 호출하여 질문을 가져와서 업데이트
-<<<<<<< HEAD
-            # question = self._fetch_gemini_question()
-            # self.question_text.set(question)
-=======
             question = random.sample(qustion_list, k=1)
             self.question_text.set(question)
->>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
             
             self.start_timer()
             self.start_camera()
