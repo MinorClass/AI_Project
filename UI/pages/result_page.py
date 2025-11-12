@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import Canvas, Button, PhotoImage
 import os
 from pathlib import Path
-
+from .mock_interview_page import MockInterview
 # 에셋 경로 (Figma에서 생성된 이미지들이 들어있는 폴더)
 ASSETS_PATH = os.path.abspath("./UI/assets/result")
 
@@ -12,7 +12,7 @@ def relative_to_assets(path: str) -> Path:
 class Result(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
-
+        self.controller = controller
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
 
@@ -34,7 +34,10 @@ class Result(tk.Frame):
         # 버튼 이미지
         self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
         button_1 = Button(self, image=self.button_image_1,
-                          command=lambda: controller.quit(),
+                          command=lambda: self.quitpage(),
                           borderwidth=0, relief="flat")
         canvas.create_window(822, 829, window=button_1, anchor="nw")
 
+    def quitpage(self):
+        print(MockInterview.get_parameter)
+        self.controller.quit()
