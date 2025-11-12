@@ -2,7 +2,7 @@ import tkinter as tk
 
 from pages.first_page import FirstPage
 from pages.camera_check_page import CheckCam
-from pages.mock_interview_page import MockInterview
+# from pages.mock_interview_page import MockInterview
 from pages.wait4game_page import WaitGame
 from pages.introduct_game_page import IntroGames
 from pages.intro_rsp_game_page import IntroRSPGame
@@ -20,11 +20,19 @@ class App(tk.Tk):
         self.title("AI Interview App")
         self.geometry("1920x1080")
         self.resizable(False,False)
-        
+
+        #  결과 페이지가 바로 실행되더라도 안전하도록 기본 scores 초기화
+        self.scores = {
+            "rsp": {"correct": 0, "total": 0},
+            "clicknum": {"correct": 0, "total": 0},
+            "compare": {"correct": 0, "total": 0}
+        }
+
         self.frames = {}
         pages = (
             FirstPage,
             CheckCam,
+<<<<<<< HEAD
             MockInterview,
             # WaitGame,
             # IntroGames,
@@ -36,6 +44,19 @@ class App(tk.Tk):
             # CompareGame,
             # WaitResult,
             # Result
+=======
+            # MockInterview,
+            WaitGame,
+            IntroGames,
+            IntroRSPGame,
+            RSPGame,
+            IntroClickGame,
+            ClickGame,
+            IntroCompareGame,
+            CompareGame,
+            WaitResult,
+            Result
+>>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
         )
 
         for PageClass in pages:
@@ -44,11 +65,20 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
+<<<<<<< HEAD
         self.show_frame("FirstPage")
         # self.show_frame("RSPGame")
+=======
+        # self.show_frame("FirstPage")
+        self.show_frame("CompareGame")
+>>>>>>> 4684d216abc160cae0c173542d0e2e0aaba6ea62
 
-    def show_frame(self, page_name):
-        frame = self.frames[page_name]
+    def show_frame(self, page_name: str):
+        frame = self.frames.get(page_name)
+        if frame is None:
+#             # 디버그용 출력 — 필요 시 제거
+            print(f"show_frame: '{page_name}' 프레임이 등록되어 있지 않습니다.")
+            return
         frame.tkraise()
 
 if __name__ == "__main__":
