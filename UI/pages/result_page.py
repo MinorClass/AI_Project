@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import Canvas, Button, PhotoImage
 import os
 from pathlib import Path
-
+from .mock_interview_page import MockInterview
 # 에셋 경로 (Figma에서 생성된 이미지들이 들어있는 폴더)
 ASSETS_PATH = os.path.abspath("./UI/assets/result")
 
@@ -13,10 +13,15 @@ class Result(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFFFFF")
         self.controller = controller
+<<<<<<< HEAD
 
         # 캔버스 생성
         self.canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         self.canvas.pack(fill="both", expand=True)
+=======
+        canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
+        canvas.pack(fill="both", expand=True)
+>>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
 
         # 배경 이미지 (안전 로드)
         try:
@@ -35,6 +40,7 @@ class Result(tk.Frame):
         # (기존) 결과 이미지1 위치는 유지하되 image_r는 사용하지 않음
         # 기존에 사용하던 image_r 왼쪽 복제는 제거하고, 오른쪽 영역에 점수 텍스트를 표시함.
 
+<<<<<<< HEAD
         # 왼쪽 결과 박스 이미지(기존 이미지_r 자리) — 유지하려면 아래 주석 해제
         try:
             self.image_r_left = PhotoImage(file=relative_to_assets("image_r.png"))
@@ -103,3 +109,15 @@ class Result(tk.Frame):
         # 프레임을 보이기 직전에 최신 점수로 갱신
         self.update_score_display()
         super().tkraise(aboveThis)
+=======
+        # 버튼 이미지
+        self.button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
+        button_1 = Button(self, image=self.button_image_1,
+                          command=lambda: self.quitpage(),
+                          borderwidth=0, relief="flat")
+        canvas.create_window(822, 829, window=button_1, anchor="nw")
+
+    def quitpage(self):
+        print(MockInterview.get_parameter)
+        self.controller.quit()
+>>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a

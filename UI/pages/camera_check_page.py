@@ -20,7 +20,10 @@ class CheckCam(Frame):
         super().__init__(parent, bg="#FFFFFF")
 
         self.controller = controller
+<<<<<<< HEAD
         # self.is_camera_on = False
+=======
+>>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
 
             
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
@@ -76,6 +79,16 @@ class CheckCam(Frame):
                           relief="flat")
         canvas.create_window(WEIGHT_CENTER+87, 686, window=btn_camON, anchor="center")
 
+<<<<<<< HEAD
+=======
+        # 🔹 앱 종료 버튼 (button_2.png)
+        # 💡 PhotoImage -> ImageTk.PhotoImage 로 수정
+        self.button_image_2 = ImageTk.PhotoImage(Image.open(relative_to_assets("button_2.png")))
+        button_2 = Button(self, image=self.button_image_2,
+                          command=lambda:self.start_camera_feed(),
+                          borderwidth=0, relief="flat")
+        canvas.create_window(1014, 686, window=button_2, anchor="nw")
+>>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
 
         # 🔹 다음으로 (button_3.png)
         self.button_image_3 = ImageTk.PhotoImage(Image.open(relative_to_assets("button/btn_ready.png")))

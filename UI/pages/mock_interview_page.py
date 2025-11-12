@@ -7,22 +7,28 @@ import cv2
 from PIL import Image, ImageTk 
 from .GazeTracking.example import AttentionMonitor
 import google.generativeai as genai 
+import random
 
-API_KEY = "AIzaSyBSuHxEGpxivX39ZPjy_cuI1jvDq5MkdyM"  
+# API_KEY = "AIzaSyBSuHxEGpxivX39ZPjy_cuI1jvDq5MkdyM"  
 
-try:
-    genai.configure(api_key=API_KEY)
-    MODEL = genai.GenerativeModel('gemini-2.5-flash')
-except Exception as e:
-    print(f"Gemini API 설정 실패: {e}. 질문 자동 생성 기능이 작동하지 않습니다.")
-    MODEL = None
+# try:
+#     genai.configure(api_key=API_KEY)
+#     MODEL = genai.GenerativeModel('gemini-2.5-flash')
+# except Exception as e:
+#     print(f"Gemini API 설정 실패: {e}. 질문 자동 생성 기능이 작동하지 않습니다.")
+#     MODEL = None
 
-
+<<<<<<< HEAD
 ASSETS_PATH = os.path.abspath("./UI/assets")
 WEIGHT_CENTER = 1920 //2
 HEIGHT_CENTER = 1080 // 2
 MAINCOLOR = "#703BA2"
 # SUBCOLOR = 
+=======
+qustion_list = ["5년 후 본인의 커리어 목표와 그 목표 달성을 위한 구체적인 계획은 무엇입니까?","지원하신 직무와 관련하여 본인이 가진 가장 큰 강점과 약점은 무엇이며, 약점을 극복하기 위해 어떤 노력을 하고 있습니까?","1분 동안 본인 소개를 해주십시오.","살면서 가장 큰 성공 경험과 실패 경험을 각각 이야기해 주십시오.","스트레스 해소 방법이나 본인만의 원동력은 무엇입니까?",
+                "입사 후 가장 먼저 하고 싶은 일은 무엇이며, 회사에 어떻게 기여할 수 있습니까?"]
+ASSETS_PATH = os.path.abspath("./UI/assets/mock_interview")
+>>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)
@@ -33,7 +39,7 @@ class MockInterview(Frame):
         self.monitor = None
         self.controller = controller
         self.unfocustime = 0.0
-
+        self.tremor_time = 0.0
         canvas = Canvas(self, bg="#FFFFFF", height=1080, width=1920)
         canvas.pack(fill="both", expand=True)
 
@@ -138,18 +144,18 @@ class MockInterview(Frame):
 
 
 
-    def _fetch_gemini_question(self):
-        if not MODEL:
-            return "Gemini API 설정에 문제가 있어 질문을 가져올 수 없습니다."
+    # def _fetch_gemini_question(self):
+    #     if not MODEL:
+    #         return "Gemini API 설정에 문제가 있어 질문을 가져올 수 없습니다."
         
-        try:
-            question = "한국인 면접관으로 랜덤 질문 하나만 내봐 질문만 간결하게 답해줘"
-            # 불필요한 공백/줄바꿈 제거 후 반환
-            response = MODEL.generate_content(question)
-            return response.text.strip()
+    #     try:
+    #         question = "한국인 면접관으로 랜덤 질문 하나만 내봐 질문만 간결하게 답해줘"
+    #         # 불필요한 공백/줄바꿈 제거 후 반환
+    #         response = MODEL.generate_content(question)
+    #         return response.text.strip()
             
-        except Exception as e:
-            return f"질문 생성 중 오류 발생: {e}"
+    #     except Exception as e:
+    #         return f"질문 생성 중 오류 발생: {e}"
 
 
     def start_interview(self):
@@ -158,8 +164,13 @@ class MockInterview(Frame):
             self.is_interview_running = True
             
             #면접 시작 시 Gemini API를 호출하여 질문을 가져와서 업데이트
+<<<<<<< HEAD
             # question = self._fetch_gemini_question()
             # self.question_text.set(question)
+=======
+            question = random.sample(qustion_list, k=1)
+            self.question_text.set(question)
+>>>>>>> 8e1c3e60edb7c2d1f52bcdd82a5ca96b48893b2a
             
             self.start_timer()
             self.start_camera()
@@ -173,6 +184,7 @@ class MockInterview(Frame):
             self.monitor.__del__() 
         
         print(self.unfocustime)
+        print(self.tremor_time)
         print("카메라 및 면접 모니터링이 중단되었습니다.")
         self.controller.show_frame("WaitGame")
         
@@ -208,19 +220,20 @@ class MockInterview(Frame):
                 self.photo = ImageTk.PhotoImage(image=resized_image)
                 self.video_panel.config(image=self.photo)
                 self.video_panel.image = self.photo 
-                feedback, self.unfocustime = self._generate_feedback_text(results,self.unfocustime)
+                feedback, self.unfocustime , self.tremor_time = self._generate_feedback_text(results,self.unfocustime,self.tremor_time)
                 self.feedback_text.set(feedback)
                 
             
         self.camera_update_id = self.after(self.delay, self.update_camera)
 
-    def _generate_feedback_text(self, results,unfocustime):
+    def _generate_feedback_text(self, results,unfocustime,tremor_time):
         feedback = []
         # 1. 시선 피드백
         gaze_text = results.get("gaze_text", "None")
         gaze_time = results.get("gaze_elapsed_time", 0.0)
         gaze_unfoucs = results.get("distraction_time")
-
+        tremor_time1 = results.get("tremor_time")
+        
         if "distraction" in gaze_text:
             feedback.append(f"시선 상태 : 눈을 맞추주십시오")
         elif "focus on right" in gaze_text or "focus on left" in gaze_text:
@@ -237,6 +250,9 @@ class MockInterview(Frame):
             feedback.append(f" 신체 상태: 안정적입니다.")
         else:
             feedback.append(f" 신체 상태: 감지 대기 중입니다.")
-            
-        return "\n".join(feedback),unfocustime
-
+        tremor_time1 = max(tremor_time,tremor_time1)
+        return "\n".join(feedback),unfocustime,tremor_time1
+    
+    @property
+    def get_parameter(self):
+        return self.unfocustime, self.tremor_time
