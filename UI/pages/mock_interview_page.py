@@ -69,7 +69,7 @@ class MockInterview(Frame):
         # self.image2 = PhotoImage(file=relative_to_assets("bimage_r.png"))
         # canvas.create_image(955,210, image=self.image2, anchor="nw")
             #가상면접관 이미지 자리
-        self.image3 = PhotoImage(file=relative_to_assets("mock_interview/image_v.png"))
+        self.image3 = PhotoImage(file=relative_to_assets("mock_interview/image_m1.png"))
         canvas.create_image(735,266, image=self.image3, anchor="nw")
             #질문창
         self.image4 = PhotoImage(file=relative_to_assets("mock_interview/image_q.png"))

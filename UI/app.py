@@ -55,8 +55,7 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("WaitResult")
-        # self.show_frame("WaitResult")
+        self.show_frame("MockInterview")
     def show_frame(self, page_name: str):
         if page_name == "Result":
             self.last = True
