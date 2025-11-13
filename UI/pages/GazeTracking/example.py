@@ -13,7 +13,7 @@ import numpy as np
 FFT_WINDOW_SIZE = 64  # 주파수 분석을 위해 추적할 프레임 수 (2의 거듭제곱)
 FPS = 30 # 비디오 캡처 FPS (실제 환경에 맞게 조정 필요)
 TREMOR_FREQUENCY_RANGE = (3.0, 15.0) # 떨림으로 간주할 주파수 대역 (Hz)
-TREMOR_AMPLITUDE_THRESHOLD = 0.15  # 떨림 판단 기준 (정규화된 진폭)
+TREMOR_AMPLITUDE_THRESHOLD = 0.20  # 떨림 판단 기준 (정규화된 진폭)
 
 # 시선 경고 설정 (기존과 동일)
 ALERT_THRESHOLD = 3.0 # 초 (중앙을 벗어난 시선 지속 시간)

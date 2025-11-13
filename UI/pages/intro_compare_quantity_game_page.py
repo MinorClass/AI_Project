@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 # 에셋 경로 (Figma에서 생성된 이미지들이 들어있는 폴더)
-ASSETS_PATH = os.path.abspath("./UI/assets/intro_click_num_game")
+ASSETS_PATH = os.path.abspath("./UI/assets/intro_compare_quantity_game")
 
 def relative_to_assets(path: str) -> Path:
     return Path(ASSETS_PATH) / Path(path)

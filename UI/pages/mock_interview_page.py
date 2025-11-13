@@ -94,7 +94,7 @@ class MockInterview(Frame):
         self.question_text.set("면접 시작 버튼을 눌러주세요.") 
         
         q_x, q_y = 440, 780 
-        q_width = 480 
+        q_width = 1000
         
         self.question_label = Label(self, textvariable=self.question_text, 
                                        font=("AnekGurmukhi Light", 18), fg="#353C92", bg="white", 
@@ -105,10 +105,11 @@ class MockInterview(Frame):
         self.feedback_text = StringVar(self)
         self.feedback_text.set("")
         
+        f_width =450
         self.feedback_label = Label(self, textvariable=self.feedback_text, 
-                                       font=("AnekGurmukhi Light", 18), fg="#353C92", bg="white", 
-                                       justify=LEFT, anchor="nw")
-        canvas.create_window(1270, 640, window=self.feedback_label, anchor="nw")
+                                       font=("AnekGurmukhi Light", 14), fg="#353C92", bg="white", 
+                                       justify=LEFT, anchor="nw",wraplength=f_width)
+        canvas.create_window(1270, 610, window=self.feedback_label, anchor="nw")
         
         # 종료 버튼
         self.btn_end = PhotoImage(file=relative_to_assets("button/btn_blue.png"))
@@ -226,11 +227,11 @@ class MockInterview(Frame):
         tremor_time1 = results.get("tremor_time")
         
         if "distraction" in gaze_text:
-            feedback.append(f"시선 상태 : 눈을 맞추주십시오")
+            feedback.append(f"시선 상태 : \n눈을 맞춰주십시오")
         elif "focus on right" in gaze_text or "focus on left" in gaze_text:
-            feedback.append(f"시선 이탈 감지: 중앙을 벗어난 지 {gaze_time:.2f}초 경과.") 
+            feedback.append(f"시선 이탈 감지: \n중앙을 벗어난 지 {gaze_time:.2f}초 경과.") 
         else:
-            feedback.append(f"시선 상태: {gaze_text}")
+            feedback.append(f"시선 상태: \n{gaze_text}")
         unfocustime = max(gaze_unfoucs,unfocustime)
         # 2. 떨림 피드백
         tremor_status = results.get("tremor_status", "(Stable)")
@@ -238,9 +239,9 @@ class MockInterview(Frame):
         if "Tremor" in tremor_status:
             feedback.append("신체 상태 : 불안정  ")
         elif "Stable" in tremor_status:
-            feedback.append(f" 신체 상태: 안정적입니다.")
+            feedback.append(f"신체 상태 : 안정적입니다.")
         else:
-            feedback.append(f" 신체 상태: 감지 대기 중입니다.")
+            feedback.append(f"신체 상태: 감지 대기 중입니다.")
         tremor_time1 = max(tremor_time,tremor_time1)
         return "\n".join(feedback),unfocustime,tremor_time1
     
