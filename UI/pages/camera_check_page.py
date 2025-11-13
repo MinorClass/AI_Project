@@ -83,7 +83,6 @@ class CheckCam(Frame):
         if not self.monitor or not self.monitor.isOpened():
             print("카메라를 열 수 없습니다.")
             return
-        # self.is_camera_on = True
         self.update_frame()
 
     def update_frame(self):

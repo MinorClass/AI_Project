@@ -14,18 +14,22 @@ from pages.compare_quantity_game_page import CompareGame
 from pages.wait4result_page import WaitResult
 from pages.result_page import Result
 
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("AI Interview App")
         self.geometry("1920x1080")
         self.resizable(False,False)
-
+        self.last = False
         #  결과 페이지가 바로 실행되더라도 안전하도록 기본 scores 초기화
         self.scores = {
             "rsp": {"correct": 0, "total": 0},
             "clicknum": {"correct": 0, "total": 0},
-            "compare": {"correct": 0, "total": 0}
+            "compare": {"correct": 0, "total": 0},
+            "unfocus": {"time": 0.0},
+            "tremor": {"time": 0.0}
         }
 
         self.frames = {}
@@ -51,10 +55,10 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("FirstPage")
-        # self.show_frame("Result")
-
+        self.show_frame("MockInterview")
     def show_frame(self, page_name: str):
+        if page_name == "Result":
+            self.last = True
         frame = self.frames.get(page_name)
         if frame is None:
 #             # 디버그용 출력 — 필요 시 제거

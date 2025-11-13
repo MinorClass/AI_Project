@@ -88,7 +88,7 @@ class AttentionMonitor:
             static_image_mode=False, model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5
         )
         self.cap = cv2.VideoCapture(camera_index)
-        
+        self.start_time = None
         # 실제 카메라 FPS를 가져오거나 설정값 사용
         self.fps = self.cap.get(cv2.CAP_PROP_FPS) 
         if self.fps <= 1.0: # FPS 획득 실패 시 기본값
