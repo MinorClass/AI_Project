@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, juniUI]
+  pull_request:
+    branches: [main, juniUI]
+
+jobs:
+  test-and-lint: # python 4개 버전에서 병렬로 테스트
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11','3.12']
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Cache pip dependencies # pip 설치 속도 개선
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Set up Python ${{ matrix.python-version }} 
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install black pylint pytest pytest-cov
+
+    - name: Code Style Check (Black)
+      run: black . --check
+
+    - name: Code Quality Check (Pylint)
+      run: pylint $(git ls-files "*.py")
+
+    - name: Run Tests
+      run: pytest tests/
+
+
